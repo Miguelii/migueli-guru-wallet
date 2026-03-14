@@ -1,0 +1,18 @@
+:root {
+    --background: #fbfbfd;
+    --primary: #262626;
+    --neutral: #737373;
+    --divider: #e5e5e5;
+    --neutral-dark: #1d1d1d;
+    --neutral-light: #fafafa;
+}
+
+@theme inline {
+    --font-sans: var(--font-geist-sans);
+    --color-background: var(--background);
+    --color-primary: var(--primary);
+    --color-neutral: var(--neutral);
+    --color-neutral-light: var(--neutral-light);
+    --color-neutral-dark: var(--neutral-dark);
+    --color-divider: var(--divider);
+}
