@@ -55,7 +55,10 @@ const generateCSP = () => {
             https://www.google.pt
             blob: data: 
             https://*.googletagmanager.com
-            https://avatars.githubusercontent.com;
+            https://avatars.githubusercontent.com
+            https://assets.coingecko.com
+            https://s3-symbol-logo.tradingview.com
+            https://www.vanguard.co.uk;
         font-src 'self'
             https://fonts.gstatic.com;
         frame-src 'self' 

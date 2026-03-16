@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
                 pathname: '/assets/**',
             },
         ],
+        remotePatterns: [
+            { hostname: 'assets.coingecko.com' },
+            { hostname: 's3-symbol-logo.tradingview.com' },
+            { hostname: 'www.vanguard.co.uk' },
+            { hostname: 'via.placeholder.com' },
+        ],
         minimumCacheTTL: 2678400, // 31 days
     },
     env: {
