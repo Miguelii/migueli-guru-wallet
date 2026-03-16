@@ -1,4 +1,4 @@
-# Migueli Guru Finances - Wallet
+# Migueli Guru Finances
 
 Private app for tracking Crypto, ETF, and Stock investments
 

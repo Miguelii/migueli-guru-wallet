@@ -2,7 +2,6 @@ import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
-import { Header } from '@/components/header'
 
 const geistSans = Geist({
     variable: '--font-sans',
@@ -13,22 +12,19 @@ const geistSans = Geist({
 })
 
 export const metadata: Metadata = {
-    title: 'Migueli Guru Finances - Wallet',
-    description: 'Track your crypto and stock portfolio with automatic DCA calculations',
+    title: 'Migueli Guru Finances',
+    description: 'Private app for tracking Crypto, ETF, and Stock investments',
 }
 
-export default function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode
-}>) {
+type Props = LayoutProps<'/'>
+
+export default function RootLayout({ children }: Props) {
     return (
         <html lang="en">
             <body
                 className={`${geistSans.variable} font-sans antialiased bg-background text-primary`}
             >
-                <Header />
-                <main className="flex-1 p-4 md:p-6 max-w-screen-2xl mx-auto w-full">{children}</main>
+                <div className="flex-1">{children}</div>
                 <Toaster />
             </body>
         </html>

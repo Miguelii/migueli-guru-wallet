@@ -55,7 +55,9 @@ function PortfolioSummaryCard({ title, icon: Icon, holdings }: PortfolioSummaryC
                     <p className="text-xs text-muted-foreground">
                         Invested {formatCurrency(totalInvested, currency)}
                     </p>
-                    <div className={`flex items-center gap-0.5 text-xs font-medium ${isPositive ? 'text-success' : 'text-destructive'}`}>
+                    <div
+                        className={`flex items-center gap-0.5 text-xs font-medium ${isPositive ? 'text-success' : 'text-destructive'}`}
+                    >
                         <span className="tabular-nums">
                             {formatSignedCurrency(glValue, currency)} · {formatPercentage(glPct)}
                         </span>
