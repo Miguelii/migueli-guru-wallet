@@ -1,6 +1,6 @@
 'use client'
 
-import { Pie, PieChart, Cell } from 'recharts'
+import { Pie, PieChart, Cell, Label } from 'recharts'
 import {
     ChartContainer,
     ChartTooltip,
@@ -8,7 +8,7 @@ import {
     type ChartConfig,
 } from '@/components/ui/chart'
 import type { HoldingSummary } from '@/types/Holding'
-import { formatPercentage } from '@/lib/formaters'
+import { formatCurrency, formatPercentage } from '@/lib/formaters'
 
 const COLORS = [
     'var(--color-chart-1)',
@@ -111,6 +111,37 @@ export function AllocationChart({ holdings }: Props) {
                     {data.map((entry) => (
                         <Cell key={entry.name} fill={entry.fill} />
                     ))}
+                    <Label
+                        content={({ viewBox }) => {
+                            if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                                const currency = holdings[0]?.currency ?? 'EUR'
+                                return (
+                                    <text
+                                        x={viewBox.cx}
+                                        y={viewBox.cy}
+                                        textAnchor="middle"
+                                        dominantBaseline="middle"
+                                    >
+                                        <tspan
+                                            x={viewBox.cx}
+                                            y={(viewBox.cy ?? 0) - 8}
+                                            className="fill-muted-foreground text-xs"
+                                        >
+                                            Total
+                                        </tspan>
+                                        <tspan
+                                            x={viewBox.cx}
+                                            y={(viewBox.cy ?? 0) + 10}
+                                            className="fill-foreground text-sm font-semibold"
+                                        >
+                                            {formatCurrency(totalValue, currency)}
+                                        </tspan>
+                                    </text>
+                                )
+                            }
+                            return null
+                        }}
+                    />
                 </Pie>
             </PieChart>
         </ChartContainer>

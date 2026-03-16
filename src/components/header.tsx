@@ -1,9 +1,12 @@
+import { Wallet } from 'lucide-react'
+
 export function Header() {
     return (
-        <header className="border-b shadow-sm">
-            <div className="flex items-center h-12 px-4 md:px-6">
-                <span className="text-base font-semibold tracking-tight">
-                    Migueli Guru Finances
+        <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
+            <div className="flex items-center gap-2 h-14 px-4 md:px-6 max-w-screen-2xl mx-auto">
+                <Wallet className="h-5 w-5 text-chart-1" />
+                <span className="text-base font-bold tracking-tight">
+                    Migueli Guru Finances - Wallet
                 </span>
             </div>
         </header>

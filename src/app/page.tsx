@@ -13,7 +13,7 @@ export default function DashboardPage() {
     const holdings = aggregateHoldings(transactions, data)
 
     return (
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6 mb-24">
             <CurrentPricesBadges data={data} />
 
             <div className="flex items-center justify-between">
@@ -22,12 +22,12 @@ export default function DashboardPage() {
 
             <SummaryCards holdings={holdings} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2">
                     <TransactionsCard transactions={transactions} tickerData={data} />
                 </div>
                 <AllocationCardWithChart holdings={holdings} />
-            </div>
+            </section>
 
             <HoldingsCard holdings={holdings} />
         </div>

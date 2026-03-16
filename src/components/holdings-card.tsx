@@ -15,6 +15,7 @@ import {
 } from '@/lib/formaters'
 import Image from 'next/image'
 import { getAssetLogo } from '@/lib/asset-logos'
+import { LayoutList } from 'lucide-react'
 import type { HoldingSummary } from '@/types/Holding'
 
 type Props = {
@@ -23,11 +24,12 @@ type Props = {
 
 export function HoldingsCard({ holdings }: Props) {
     return (
-        <Card>
-            <CardHeader>
+        <Card className="shadow-sm">
+            <CardHeader className="flex flex-row items-center gap-2">
+                <LayoutList className="h-5 w-5 text-muted-foreground" />
                 <CardTitle>Your Holdings</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -47,7 +49,10 @@ export function HoldingsCard({ holdings }: Props) {
                     </TableHeader>
                     <TableBody>
                         {holdings.map((h) => (
-                            <TableRow key={h.ticker_id}>
+                            <TableRow
+                                key={h.ticker_id}
+                                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                            >
                                 <TableCell className="font-medium">
                                     <div className="flex items-center gap-2">
                                         <Image

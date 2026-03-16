@@ -26,13 +26,11 @@ export function formatQuantity(value: number, decimals = 4): string {
 }
 
 export function formatPercentage(value: number): string {
-    const sign = value >= 0 ? '+' : ''
-    return `${sign}${value.toFixed(2)}%`
+    return `${value.toFixed(2)}%`
 }
 
 export function formatSignedCurrency(value: number, currency: string): string {
-    const sign = value >= 0 ? '+' : ''
-    return `${sign}${getCurrencyFormatter(currency).format(value)}`
+    return `${getCurrencyFormatter(currency).format(value)}`
 }
 
 export function formatDate(dateStr: string) {

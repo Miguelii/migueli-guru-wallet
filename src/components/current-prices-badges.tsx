@@ -3,6 +3,7 @@ import { getAssetLogo } from '@/lib/asset-logos'
 import { Badge } from '@/components/ui/badge'
 import type { TickerData } from '@/types/Transaction'
 import { formatCurrency } from '@/lib/formaters'
+import { getLatestUpdate } from '@/lib/utils'
 
 type Props = {
     data: TickerData[]
@@ -16,7 +17,7 @@ export function CurrentPricesBadges({ data }: Props) {
                     <Badge
                         key={td.ticker}
                         variant="secondary"
-                        className="flex items-center gap-1.5 shrink-0 px-2.5 py-2 h-10"
+                        className="flex items-center gap-1.5 shrink-0 px-2.5 py-2 h-10 cursor-pointer hover:bg-accent transition-colors"
                     >
                         <Image
                             src={getAssetLogo(td.ticker)}
@@ -33,7 +34,9 @@ export function CurrentPricesBadges({ data }: Props) {
                     </Badge>
                 ))}
             </div>
-            <span className="text-xs text-muted-foreground">Last Update: 16/03/2025 17h40:31</span>
+            <span className="text-xs text-muted-foreground">
+                Last Update: {getLatestUpdate(data)}
+            </span>
         </div>
     )
 }

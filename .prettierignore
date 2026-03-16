@@ -3,6 +3,6 @@ build
 coverage
 
 CLAUDE.md
-skills-lock.json
 .agents
 .claude
+design-system
