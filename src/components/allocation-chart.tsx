@@ -26,7 +26,6 @@ function renderCustomLabel({
     cx,
     cy,
     midAngle,
-    innerRadius,
     outerRadius,
     name,
     percentage,
@@ -34,7 +33,6 @@ function renderCustomLabel({
     cx: number
     cy: number
     midAngle: number
-    innerRadius: number
     outerRadius: number
     name: string
     percentage: number

@@ -1,6 +1,6 @@
 import type { NextResponse } from 'next/server'
-import { isPathFromStaticFiles } from '@/lib/utils'
 import { NEXT_IMAGE_PATH } from '@/lib/constants'
+import { isPathFromStaticFiles } from './utils.server'
 
 export const setCSP = (response: NextResponse, pathname: string) => {
     const csp = generateCSP()

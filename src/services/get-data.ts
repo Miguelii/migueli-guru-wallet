@@ -1,6 +1,6 @@
-import { Ticker, TickerData } from '@/types/Transaction'
+import { Ticker, type TickerData } from '@/types/Transaction'
 
-export const data: TickerData[] = [
+const data: TickerData[] = [
     {
         ticker: Ticker.ETH,
         curr_price: 2555.135,

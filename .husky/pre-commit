@@ -1,0 +1,4 @@
+npm run prettier
+git diff --quiet || git add -A
+pnpm check
+pnpm knip
