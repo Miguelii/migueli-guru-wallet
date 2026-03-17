@@ -5,11 +5,13 @@ Personal crypto and stock portfolio tracker. Replaces an Excel-based workflow wi
 ## Stack
 
 - **Framework**: Next.js 16.1.6, React 19.2.3, TypeScript
-- **Styling**: Tailwind CSS 4 with `@theme inline` tokens
+- **Database**: Supabase (PostgreSQL) via `@supabase/ssr`
+- **Auth**: Supabase Auth (email/password) with server actions
+- **Env Validation**: `@t3-oss/env-nextjs` with zod schemas
+- **Styling**: Tailwind CSS 4 with `@theme inline` tokens (OKLch color space)
 - **Components**: shadcn/ui (New York style) + Lucide icons
 - **Forms**: react-hook-form + zod validation
 - **Charts**: recharts (via shadcn chart wrapper)
-- **Dates**: date-fns
 - **Notifications**: sonner
 - **React Compiler**: enabled for automatic optimization
 - **Package manager**: pnpm (never npm or yarn)
@@ -22,23 +24,88 @@ Personal crypto and stock portfolio tracker. Replaces an Excel-based workflow wi
 
 ```
 src/
-  app/              # Next.js pages (App Router)
+  app/
+    page.tsx              # Auth/login page (public)
+    not-found.tsx         # 404 page
+    layout.tsx            # Root layout
+    portfolio/
+      page.tsx            # Dashboard (protected, Server Component)
+      layout.tsx          # Portfolio layout with header
   components/
-    ui/             # shadcn/ui primitives (auto-generated, do not edit)
-    layout/         # App shell, sidebar, header
-    dashboard/      # Dashboard page components
-    transactions/   # Transaction CRUD components
-    assets/         # Asset detail components
+    ui/                   # shadcn/ui primitives (auto-generated, do not edit)
+    auth-card.tsx         # Login form (client component)
+    summary-cards.tsx     # Portfolio summary by asset type
+    transactions-card.tsx # Transaction table
+    holdings-card.tsx     # Holdings display with P&L
+    allocation-chart.tsx  # Pie chart component
+    allocation-card-with-chart.tsx  # Allocation wrapper
+    current-prices-badges.tsx       # Current price badges
+    header.tsx            # Navigation header
+  services/
+    get-crypto-assets.ts  # Fetch transactions from Supabase (cached)
+    get-data.ts           # Fetch ticker/price data from Supabase (cached)
+    sb-login-action.ts    # Server action for authentication
   lib/
-    types.ts        # All TypeScript interfaces
-    constants.ts    # Enums, defaults
-    calculations.ts # Pure calculation functions (DCA, P&L)
-    format.ts       # Currency/date/percentage formatters
-    storage.ts      # localStorage abstraction (future: Supabase)
-    hooks/          # Custom hooks
-  providers/        # React context providers
-  styles/           # Global CSS, theme tokens
+    calculations.ts       # Pure calculation functions (DCA, P&L, holdings aggregation)
+    formaters.ts          # Currency/date/percentage formatters (Intl API)
+    constants.ts          # Enums, route constants, ticker sets
+    utils.ts              # Client utilities (cn, etc.)
+    utils.server.ts       # Supabase server client, proxy, static path check
+    set-csp.ts            # Content Security Policy headers
+    try-catch.ts          # Async error handling wrapper
+    logger.ts             # Logging utility
+  types/
+    Transaction.ts        # Transaction, Ticker, TickerData types
+    Holding.ts            # HoldingSummary type
+    SbTables.ts           # Supabase table name enum
+  env/
+    server.ts             # Server env validation (NEXT_SUPABASE_*)
+    client.ts             # Client env validation (NEXT_PUBLIC_*)
+    load-system-envs.ts   # Env loading
+  styles/
+    globals.css           # Global CSS with @theme inline tokens
+    theme-typographic.css # Typography tokens
+  proxy.ts                # Next.js middleware (CSP + Supabase auth proxy)
 ```
+
+## Supabase Integration
+
+### Tables
+- `data` — ticker metadata and current prices (`TickerData`)
+- `transactions` — buy/sell/reward/fee transactions (`Transaction`)
+
+### Auth Flow
+1. Login page (`/`) with email/password form
+2. `sbLoginAction` server action validates with zod, calls `supabase.auth.signInWithPassword`
+3. `proxy.ts` middleware runs `sbProxy` on every non-static request
+4. `sbProxy` calls `supabase.auth.getClaims()` to refresh sessions
+5. Unauthenticated users accessing `/portfolio` are redirected to `/`
+
+### Server Client
+- `createSbServerClient()` in `lib/utils.server.ts` creates a per-request Supabase client using `@supabase/ssr` with cookie-based session management
+- Always create a new client per request (required for Fluid compute)
+
+### Data Fetching
+- Services use `server-only` import guard
+- `unstable_cache` from Next.js with 60s revalidation and tagged cache keys
+- `tryCatch` wrapper for consistent error handling — returns `{ data, error }`
+- Data flows as props from Server Components (no client-side state management)
+
+### Environment Variables
+```
+NEXT_SUPABASE_URL          # Supabase project URL
+NEXT_SUPABASE_PUBLISHABLE_KEY  # Supabase publishable key
+NEXT_SUPABASE_ANON_KEY     # Supabase anon key
+NEXT_PUBLIC_VERCEL_URL     # Vercel deployment URL (auto-set)
+```
+
+## Supported Assets
+
+- **Crypto**: ETH, SOL, BTC
+- **ETF**: VUAA
+- **Stocks**: ATCH
+
+Transaction types: `BUY`, `SELL`, `REWARD`, `FEE`
 
 ## Conventions
 
@@ -47,28 +114,29 @@ src/
 - No `forwardRef` — use ref as a regular prop
 - Server Components by default; add `"use client"` only when state, effects, or browser APIs are needed
 
-### State Management
-- Context providers follow the `{ state, actions, meta }` pattern (composition pattern)
-- Derived state is computed inline during render, NEVER in useEffect
-- localStorage sync uses lazy state initialization in useState
+### Data Architecture
+- All data fetched from Supabase via server-only services
+- Pure functions for all calculations — no side effects
+- DCA uses weighted average cost method (not FIFO/LIFO)
+- Multi-currency support (EUR/USD per asset)
+- Formatters use `Intl.NumberFormat` and `Intl.DateTimeFormat` (pt-PT locale), not date-fns
 
 ### Styling
 - Use Tailwind token classes (`bg-background`, `text-primary`) — never raw `var()` in className
-- Theme colors defined in `src/styles/theme-colors.css` via `@theme inline`
+- Theme colors defined in `src/styles/globals.css` via `@theme inline` (OKLch)
 - Typography tokens in `src/styles/theme-typographic.css`
+- Chart colors: `chart-1` through `chart-5`
+
+### Security
+- CSP headers set via `set-csp.ts` in middleware
+- HSTS, X-Frame-Options, Referrer-Policy configured
+- Static file prefixes: `/_next`, `/api/`, `/assets`, `/favicon`, `/robots.txt`, `/script`
 
 ### Code Quality
 - No barrel exports (index.ts re-exports)
 - Import directly from the specific file
-- Pure functions for all calculations — no side effects
-- Try-catch around all localStorage operations
-
-### Data Architecture
-- All data persisted to localStorage via `src/lib/storage.ts` abstraction
-- Storage key is versioned (`portfolio:v1`) for migration support
-- Multi-currency support (EUR/USD per asset)
-- DCA uses weighted average cost method (not FIFO/LIFO)
-- Designed so swapping to Supabase later only changes `storage.ts`
+- `server-only` import guard on all service files
+- `tryCatch` wrapper for async error handling
 
 ## Skills
 
@@ -81,6 +149,5 @@ Follow these skills for all development:
 
 ## Future Plans
 
-- Supabase database integration (replace localStorage)
-- GitHub OAuth authentication
 - Real-time price API integration
+- Transaction CRUD UI (add/edit/delete transactions in-app)
