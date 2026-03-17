@@ -29,8 +29,6 @@ export async function updateTickersPrices(): Promise<Return> {
 
     const tickers = (tickerRows ?? []) as TickerData[]
 
-    console.log({ tickers })
-
     const supported = tickers.filter((t) => t.service in priceFetchers)
 
     const results = await Promise.allSettled(
@@ -65,7 +63,7 @@ async function updateTickerPrice(supabase: SbClient, tick: TickerData): Promise<
 async function getCoinbasePrice(tick: TickerData): Promise<number | null> {
     const { data, error } = await tryCatch(async () => {
         const res = await fetch(
-            `https://api.coinbase.com/v2/prices/${tick.ticker.toUpperCase()}-${tick.currency.toUpperCase()}/buy`,
+            `https://api.coinbase.com/v2/prices/${tick.ticker.toUpperCase()}-${tick.currency.toUpperCase()}/sell`,
             {
                 method: 'GET',
                 headers: {
@@ -77,8 +75,6 @@ async function getCoinbasePrice(tick: TickerData): Promise<number | null> {
         if (!res.ok) throw new Error(`Fetch Failed status=${res.status} tick=${tick.ticker}`)
 
         const json: CoinbaseJson = await res.json()
-
-        console.log({ json })
 
         if (json?.data?.amount) {
             return Number(json?.data?.amount)
@@ -99,8 +95,6 @@ async function getFinancePrice(tick: TickerData): Promise<number | null> {
         const tickerToSearch = tick.ticker.toUpperCase()
 
         const quote = await yahooFinance.quote(tickerToSearch)
-
-        console.log({ quote })
 
         if (quote.ask == null) throw new Error(`Fetch Failed quote as is null tick=${tick.ticker}`)
 
