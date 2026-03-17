@@ -4,6 +4,20 @@ import { withBotId } from 'botid/next/config'
 const buildTimestamp = Date.now().toString()
 
 const nextConfig: NextConfig = {
+    experimental: {
+        optimizePackageImports: [
+            '@base-ui/react',
+            '@hookform/resolvers',
+            'class-variance-authority',
+            'clsx',
+            'react-hook-form',
+            'shadcn',
+            'sonner',
+            'tailwind-merge',
+            'tw-animate-css',
+            'zod',
+        ],
+    },
     reactCompiler: true,
     images: {
         qualities: [25, 50, 75, 100],
