@@ -6,8 +6,9 @@ import { createSbServerClient } from '@/lib/utils.server'
 import { SbTables } from '@/types/SbTables'
 import { type TickerData } from '@/types/Transaction'
 import { unstable_cache } from 'next/cache'
+import type { SbClient } from '@/types/SbClient'
 
-const getDataFn = (supabase: Awaited<ReturnType<typeof createSbServerClient>>) =>
+const getDataFn = (supabase: SbClient) =>
     unstable_cache(
         async () => {
             const { data, error } = await supabase.from(SbTables.DATA).select('*').order('ticker')

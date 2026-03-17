@@ -11,15 +11,17 @@ const loginSchema = z.object({
 
 type Props = z.infer<typeof loginSchema>
 
-export async function sbLoginAction(props: Props) {
+type Return = {
+    status: number
+    error?: string
+}
+
+export async function sbLoginAction(props: Props): Promise<Return> {
     const { data } = await tryCatch(async () => {
         const result = loginSchema.safeParse(props)
 
         if (!result.success) {
-            return {
-                status: 400,
-                error: 'Invalid Request',
-            }
+            throw new Error('Invalid Request')
         }
 
         const supabase = await createSbServerClient()
@@ -30,23 +32,22 @@ export async function sbLoginAction(props: Props) {
         })
 
         if (error) {
-            return {
-                status: 500,
-                error: 'Bad Request',
-            }
+            throw new Error(JSON.stringify(error))
         }
 
         return {
-            status: 200,
+            success: true,
         }
     }, 'sbLoginAction')
 
-    if (data?.status === 200) {
-        return data
+    if (data?.success === true) {
+        return {
+            status: 200,
+        }
     }
 
     return {
-        status: data?.status ?? 500,
-        error: data?.error ?? 'Unknow Error',
+        status: 400,
+        error: 'Bad Credentials',
     }
 }

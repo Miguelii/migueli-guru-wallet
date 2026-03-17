@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: 'Login | Migueli Guru Finances',
 }
 
-export default function AuthPage() {
+export default async function AuthPage() {
     return (
         <main className="flex min-h-svh items-center justify-center p-4">
             <div className="pointer-events-none fixed inset-0 overflow-hidden">

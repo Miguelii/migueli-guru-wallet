@@ -6,8 +6,9 @@ import { tryCatch } from '@/lib/try-catch'
 import { createSbServerClient } from '@/lib/utils.server'
 import { SbTables } from '@/types/SbTables'
 import { unstable_cache } from 'next/cache'
+import type { SbClient } from '@/types/SbClient'
 
-const getCryptoAssetsFn = (supabase: Awaited<ReturnType<typeof createSbServerClient>>) =>
+const getCryptoAssetsFn = (supabase: SbClient) =>
     unstable_cache(
         async () => {
             const { data, error } = await supabase.from(SbTables.TRANSACTIONS).select('*')

@@ -7,20 +7,13 @@ import { createSbServerClient } from '@/lib/utils.server'
 import { SbTables } from '@/types/SbTables'
 import type { TickerData } from '@/types/Transaction'
 import YahooFinance from 'yahoo-finance2'
+import type { CoinbaseJson } from '@/types/CoinbaseJson'
+import type { SbClient } from '@/types/SbClient'
 
 type Return = {
     success: boolean
     status: number
 }
-
-type CoinbaseJson = {
-    data: {
-        amount: string
-        currency: string
-    }
-}
-
-type SbClient = Awaited<ReturnType<typeof createSbServerClient>>
 
 type PriceFetcher = (tick: TickerData) => Promise<number | null>
 
@@ -78,7 +71,7 @@ async function getCoinbasePrice(tick: TickerData): Promise<number | null> {
             }
         )
 
-        if (!res.ok) return null
+        if (!res.ok) throw new Error(`Fetch Failed status=${res.status}`)
 
         const json: CoinbaseJson = await res.json()
 
