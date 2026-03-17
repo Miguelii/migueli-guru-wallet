@@ -28,9 +28,10 @@ export function aggregateHoldings(
 
     for (const [tickerId, txs] of grouped) {
         const td = tickerDataMap.get(tickerId)
-        const symbol = tickerId as string
+        const symbol = tickerId
         const currency = td?.currency ?? 'EUR'
         const tickerLogo = td?.logo as TickerData['logo']
+        const tickerHexColor = td?.hex_color as TickerData['hex_color']
 
         let totalQuantity = 0
         let totalInvested = 0
@@ -95,6 +96,7 @@ export function aggregateHoldings(
             ticker_id: tickerId,
             symbol,
             tickerLogo,
+            tickerHexColor,
             currency,
             total_quantity: totalQuantity,
             total_invested: totalInvested,

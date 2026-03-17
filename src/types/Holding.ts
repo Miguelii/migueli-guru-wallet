@@ -1,10 +1,11 @@
-import type { Ticker } from '@/types/Transaction'
+import type { Ticker, TickerData } from '@/types/Transaction'
 
 export type HoldingSummary = {
     ticker_id: Ticker
-    symbol: string
-    tickerLogo: string
-    currency: string
+    symbol: TickerData['ticker']
+    tickerLogo: TickerData['logo']
+    tickerHexColor: TickerData['hex_color']
+    currency: TickerData['currency']
     total_quantity: number
     total_invested: number
     total_fees: number

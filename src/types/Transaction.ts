@@ -32,4 +32,5 @@ export type TickerData = {
     currency: 'EUR' | 'USD' | 'CAD'
     symbol: '€' | '$'
     logo: `/assets/${string}`
+    hex_color: `#${number}`
 }

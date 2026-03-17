@@ -10,14 +10,6 @@ import {
 import type { HoldingSummary } from '@/types/Holding'
 import { formatCurrency, formatPercentage } from '@/lib/formaters'
 
-const COLORS = [
-    'var(--color-chart-1)',
-    'var(--color-chart-2)',
-    'var(--color-chart-3)',
-    'var(--color-chart-4)',
-    'var(--color-chart-5)',
-]
-
 type Props = {
     holdings: HoldingSummary[]
 }
@@ -59,20 +51,20 @@ function renderCustomLabel({
 export function AllocationChart({ holdings }: Props) {
     const totalValue = holdings.reduce((sum, h) => sum + h.current_value, 0)
 
-    const data = holdings.map((h, i) => ({
+    const data = holdings.map((h) => ({
         name: h.symbol,
         value: h.current_value,
         percentage: totalValue > 0 ? (h.current_value / totalValue) * 100 : 0,
         currency: h.currency,
-        fill: COLORS[i % COLORS.length],
+        fill: h.tickerHexColor,
     }))
 
     const chartConfig = Object.fromEntries(
-        holdings.map((h, i) => [
+        holdings.map((h) => [
             h.symbol,
             {
                 label: h.symbol,
-                color: COLORS[i % COLORS.length],
+                color: h.tickerHexColor,
             },
         ])
     ) satisfies ChartConfig
