@@ -18,7 +18,7 @@ export default async function PortfolioPage() {
     const holdings = aggregateHoldings(transactions, data)
 
     return (
-        <main className="flex flex-col gap-6 mb-24">
+        <main className="flex flex-col gap-6 mb-24" id="#main">
             <CurrentPricesBadges data={data} />
 
             <SummaryCards holdings={holdings} />
