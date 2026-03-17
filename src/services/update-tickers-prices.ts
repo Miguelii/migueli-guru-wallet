@@ -26,7 +26,10 @@ export async function updateTickersPrices(): Promise<Return> {
     const supabase = await createSbServerClient()
 
     const { data: tickerRows } = await supabase.from(SbTables.DATA).select('*')
+
     const tickers = (tickerRows ?? []) as TickerData[]
+
+    console.log({ tickers })
 
     const supported = tickers.filter((t) => t.service in priceFetchers)
 
