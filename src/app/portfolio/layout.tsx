@@ -11,7 +11,7 @@ export default async function PortfolioDashboard({ children }: Props) {
         <SidebarProvider
             style={
                 {
-                    '--sidebar-width': 'calc(var(--spacing) * 52)',
+                    '--sidebar-width': 'calc(var(--spacing) * 54)',
                     '--header-height': 'calc(var(--spacing) * 12)',
                 } as React.CSSProperties
             }

@@ -57,7 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                     unoptimized
                                 />
                                 <span className="text-base font-bold tracking-tight flex-wrap">
-                                    Migueli Guru Finances
+                                    Migueli Finances
                                 </span>
                             </div>
                         </SidebarMenuButton>
