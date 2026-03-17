@@ -3,6 +3,7 @@ import type { Ticker } from '@/types/Transaction'
 export type HoldingSummary = {
     ticker_id: Ticker
     symbol: string
+    tickerLogo: string
     currency: string
     total_quantity: number
     total_invested: number

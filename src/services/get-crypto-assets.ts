@@ -1,28 +1,33 @@
-import { Ticker, type Transaction, TransactionType } from '@/types/Transaction'
+import 'server-only'
 
-const DATA: Transaction[] = [
-    {
-        id: '534aaa9c-5d37-4f32-8c0a-7cd4e4e9e5ec',
-        ticker_id: Ticker.SOL,
-        type: TransactionType.Buy,
-        buy_date: '2025-10-13 16:30:57',
-        value: 1976.29,
-        quantity: 11.794,
-        buy_price: 167.57,
-        fee: 23.72,
-    },
-    {
-        id: '534aaa9c-5d37-4f32-8c0a-7cd4e4e9e5ec',
-        ticker_id: Ticker.BTC,
-        type: TransactionType.Buy,
-        buy_date: '2025-10-13 16:30:57',
-        value: 50000,
-        quantity: 1,
-        buy_price: 50000,
-        fee: 23.72,
-    },
-]
+import { type Transaction } from '@/types/Transaction'
+import { GET_DATA_CACHE_KEY } from '@/lib/constants'
+import { tryCatch } from '@/lib/try-catch'
+import { createSbServerClient } from '@/lib/utils.server'
+import { SbTables } from '@/types/SbTables'
+import { unstable_cache } from 'next/cache'
 
-export function getCryptoAssets() {
-    return DATA
+const getCryptoAssetsFn = (supabase: Awaited<ReturnType<typeof createSbServerClient>>) =>
+    unstable_cache(
+        async () => {
+            const { data, error } = await supabase.from(SbTables.TRANSACTIONS).select('*')
+
+            if (error) throw error
+
+            return data as Transaction[]
+        },
+        [GET_DATA_CACHE_KEY],
+        {
+            revalidate: 60,
+            tags: [GET_DATA_CACHE_KEY],
+        }
+    )
+
+export async function getCryptoAssets(): Promise<Transaction[]> {
+    const supabase = await createSbServerClient()
+    const { data, error } = await tryCatch(getCryptoAssetsFn(supabase), 'getCryptoAssets')
+
+    if (error) return []
+
+    return data ?? []
 }

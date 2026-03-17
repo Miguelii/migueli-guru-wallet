@@ -30,6 +30,7 @@ export function aggregateHoldings(
         const td = tickerDataMap.get(tickerId)
         const symbol = tickerId as string
         const currency = td?.currency ?? 'EUR'
+        const tickerLogo = td?.logo as TickerData['logo']
 
         let totalQuantity = 0
         let totalInvested = 0
@@ -93,6 +94,7 @@ export function aggregateHoldings(
         holdings.push({
             ticker_id: tickerId,
             symbol,
+            tickerLogo,
             currency,
             total_quantity: totalQuantity,
             total_invested: totalInvested,

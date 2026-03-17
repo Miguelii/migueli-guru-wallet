@@ -16,3 +16,5 @@ export const ETFTickerSet = new Set<Ticker>([Ticker.VUAA])
 export const StockTickerSet = new Set<Ticker>([Ticker.ATCH])
 
 export const PRIVATE_ROUTE_PAGE = '/portfolio'
+
+export const GET_DATA_CACHE_KEY = 'getData'

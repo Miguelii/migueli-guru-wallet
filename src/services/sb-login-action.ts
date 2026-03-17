@@ -1,5 +1,6 @@
 'use server'
 
+import { tryCatch } from '@/lib/try-catch'
 import { createSbServerClient } from '@/lib/utils.server'
 import { z } from 'zod'
 
@@ -11,7 +12,7 @@ const loginSchema = z.object({
 type Props = z.infer<typeof loginSchema>
 
 export async function sbLoginAction(props: Props) {
-    try {
+    const { data } = await tryCatch(async () => {
         const result = loginSchema.safeParse(props)
 
         if (!result.success) {
@@ -38,11 +39,14 @@ export async function sbLoginAction(props: Props) {
         return {
             status: 200,
         }
-    } catch (err) {
-        console.error(err)
-        return {
-            status: 500,
-            error: 'Unknow Error',
-        }
+    }, 'sbLoginAction')
+
+    if (data?.status === 200) {
+        return data
+    }
+
+    return {
+        status: data?.status ?? 500,
+        error: data?.error ?? 'Unknow Error',
     }
 }

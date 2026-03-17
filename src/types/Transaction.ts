@@ -31,4 +31,5 @@ export type TickerData = {
     service: string
     currency: 'EUR' | 'USD' | 'CAD'
     symbol: '€' | '$'
+    logo: `/assets/${string}`
 }

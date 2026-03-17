@@ -7,9 +7,9 @@ import { SummaryCards } from '@/components/summary-cards'
 import { AllocationCardWithChart } from '@/components/allocation-card-with-chart'
 import { HoldingsCard } from '@/components/holdings-card'
 
-export default function DashboardPage() {
-    const transactions = getCryptoAssets()
-    const data = getData()
+export default async function DashboardPage() {
+    const [transactions, data] = await Promise.all([getCryptoAssets(), getData()])
+
     const holdings = aggregateHoldings(transactions, data)
 
     return (

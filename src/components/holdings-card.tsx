@@ -14,7 +14,6 @@ import {
     formatSignedCurrency,
 } from '@/lib/formaters'
 import Image from 'next/image'
-import { getAssetLogo } from '@/lib/asset-logos'
 import { LayoutList } from 'lucide-react'
 import type { HoldingSummary } from '@/types/Holding'
 
@@ -56,7 +55,7 @@ export function HoldingsCard({ holdings }: Props) {
                                 <TableCell className="font-medium">
                                     <div className="flex items-center gap-2">
                                         <Image
-                                            src={getAssetLogo(h.symbol)}
+                                            src={h.tickerLogo}
                                             alt={h.symbol}
                                             width={24}
                                             height={24}

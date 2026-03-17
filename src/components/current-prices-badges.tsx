@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { getAssetLogo } from '@/lib/asset-logos'
 import { Badge } from '@/components/ui/badge'
 import type { TickerData } from '@/types/Transaction'
 import { formatCurrency } from '@/lib/formaters'
@@ -20,7 +19,7 @@ export function CurrentPricesBadges({ data }: Props) {
                         className="flex items-center gap-1.5 shrink-0 px-2.5 py-2 h-10 cursor-pointer hover:bg-accent transition-colors"
                     >
                         <Image
-                            src={getAssetLogo(td.ticker)}
+                            src={td.logo}
                             alt={td.ticker}
                             width={16}
                             height={16}

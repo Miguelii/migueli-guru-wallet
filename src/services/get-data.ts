@@ -1,40 +1,33 @@
-import { Ticker, type TickerData } from '@/types/Transaction'
+import 'server-only'
 
-const data: TickerData[] = [
-    {
-        ticker: Ticker.ETH,
-        curr_price: 2555.135,
-        last_updated_at: '2025-10-13 16:30:57',
-        currency: 'EUR',
-        service: 'coinbase',
-        symbol: '€',
-    },
-    {
-        ticker: Ticker.SOL,
-        curr_price: 145.67,
-        last_updated_at: '2025-10-13 16:30:57',
-        currency: 'EUR',
-        service: 'coinbase',
-        symbol: '€',
-    },
-    /* {
-        ticker: Ticker.ATCH,
-        curr_price: 0.18,
-        last_updated_at: '2025-10-13 16:30:57',
-        currency: 'EUR',
-        service: 'coinbase',
-        symbol: '€',
-    }, */
-    {
-        ticker: Ticker.BTC,
-        curr_price: 90000.67,
-        last_updated_at: '2025-10-13 16:30:57',
-        currency: 'EUR',
-        service: 'coinbase',
-        symbol: '€',
-    },
-]
+import { GET_DATA_CACHE_KEY } from '@/lib/constants'
+import { tryCatch } from '@/lib/try-catch'
+import { createSbServerClient } from '@/lib/utils.server'
+import { SbTables } from '@/types/SbTables'
+import { type TickerData } from '@/types/Transaction'
+import { unstable_cache } from 'next/cache'
 
-export function getData() {
-    return data
+const getDataFn = (supabase: Awaited<ReturnType<typeof createSbServerClient>>) =>
+    unstable_cache(
+        async () => {
+            const { data, error } = await supabase.from(SbTables.DATA).select('*')
+
+            if (error) throw error
+
+            return data as TickerData[]
+        },
+        [GET_DATA_CACHE_KEY],
+        {
+            revalidate: 60,
+            tags: [GET_DATA_CACHE_KEY],
+        }
+    )
+
+export async function getData(): Promise<TickerData[]> {
+    const supabase = await createSbServerClient()
+    const { data, error } = await tryCatch(getDataFn(supabase), 'getData')
+
+    if (error) return []
+
+    return data ?? []
 }
