@@ -19,9 +19,11 @@ Protects page's and api's routes (`instrumentation-client.ts`)
 
 ## Code Quality Tools
 
-- **Prettier**: Consistent code formatting
-- **ESLint**: Linting with Next.js rules
-- **TypeScript**: Strict type safety
+This project uses automated code quality tools to maintain consistency:
+
+- **Prettier**: Ensures consistent code formatting
 - **Vitest**: Unit testing
-- **Knip**: Dead code / unused exports detection
-- **Husky**: Pre-commit hooks (prettier + check + knip)
+- **Knip**: Detects unused files, exports, and dependencies
+- **TypeScript**: Provides type safety
+- **Husky**: Runs pre-commit hooks automatically
+- **SonarQube Cloud**: Continuous code analysis for bugs, vulnerabilities, and code smells
