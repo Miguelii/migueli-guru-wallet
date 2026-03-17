@@ -140,7 +140,7 @@ describe('createSbServerClient', () => {
 
     it('should call onGetAll hook after default getAll', async () => {
         const onGetAll = vi.fn()
-        await createSbServerClient({ onGetAll })
+        await createSbServerClient(false, { onGetAll })
 
         const cookieHandlers = vi.mocked(createServerClient).mock.calls[0][2].cookies as {
             getAll: () => { name: string; value: string }[]
@@ -153,7 +153,7 @@ describe('createSbServerClient', () => {
 
     it('should call onSetAll hook after default setAll', async () => {
         const onSetAll = vi.fn()
-        await createSbServerClient({ onSetAll })
+        await createSbServerClient(false, { onSetAll })
 
         const cookiesToSet = [{ name: 'sb-token', value: 'xyz', options: {} }]
         const cookieHandlers = vi.mocked(createServerClient).mock.calls[0][2].cookies as {

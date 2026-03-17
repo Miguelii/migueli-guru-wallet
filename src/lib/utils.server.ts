@@ -28,15 +28,20 @@ export const isPathFromStaticFiles = (pathname: string): boolean => {
  * @param hooks.onGetAll - Runs after reading all cookies from the cookie store.
  * @param hooks.onSetAll - Runs after writing cookies to the cookie store, receives the cookies that were set.
  */
-export async function createSbServerClient(hooks?: {
-    onGetAll?: GetAllCookies
-    onSetAll?: SetAllCookies
-}) {
+export async function createSbServerClient(
+    useSecretKey?: boolean,
+    hooks?: {
+        onGetAll?: GetAllCookies
+        onSetAll?: SetAllCookies
+    }
+) {
     const cookieStore = await cookies()
 
     return createServerClient(
         ServerEnv.NEXT_SUPABASE_URL,
-        ServerEnv.NEXT_SUPABASE_PUBLISHABLE_KEY,
+        useSecretKey
+            ? ServerEnv.NEXT_SUPABASE_SERVICE_ROLE_KEY
+            : ServerEnv.NEXT_SUPABASE_PUBLISHABLE_KEY,
         {
             cookies: {
                 getAll() {
@@ -75,7 +80,7 @@ export async function sbProxy(request: NextRequest) {
 
     // With Fluid compute, don't put this client in a global environment
     // variable. Always create a new one on each request.
-    const supabase = await createSbServerClient({
+    const supabase = await createSbServerClient(false, {
         onSetAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
             supabaseResponse = NextResponse.next({

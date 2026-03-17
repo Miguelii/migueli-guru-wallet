@@ -23,7 +23,7 @@ const priceFetchers: Record<string, PriceFetcher> = {
 }
 
 export async function updateTickersPrices(): Promise<Return> {
-    const supabase = await createSbServerClient()
+    const supabase = await createSbServerClient(true)
 
     const { data: tickerRows } = await supabase.from(SbTables.DATA).select('*')
 

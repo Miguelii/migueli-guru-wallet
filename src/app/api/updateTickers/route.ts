@@ -15,7 +15,7 @@ async function isAuthorized(request: NextRequest): Promise<boolean> {
         return verifyApiKey(apiKey, ServerEnv.NEXT_UPDATE_TICKERS_SECRET_KEY)
     }
 
-    const supabase = await createSbServerClient()
+    const supabase = await createSbServerClient(true)
     const { data } = await supabase.auth.getUser()
 
     return !!data.user
