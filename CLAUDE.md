@@ -14,6 +14,7 @@ Personal crypto and stock portfolio tracker. Replaces an Excel-based workflow wi
 - **Charts**: recharts (via shadcn chart wrapper)
 - **Notifications**: sonner
 - **Testing**: Vitest + @testing-library/react + jsdom
+- **Bot Protection**: Vercel BotId (`botid`)
 - **React Compiler**: enabled for automatic optimization
 - **Package manager**: pnpm (never npm or yarn)
 
@@ -29,6 +30,9 @@ src/
     page.tsx              # Auth/login page (public)
     not-found.tsx         # 404 page
     layout.tsx            # Root layout
+    api/
+      updateTickers/
+        route.ts          # POST endpoint to update ticker prices
     portfolio/
       page.tsx            # Dashboard (protected, Server Component)
       layout.tsx          # Portfolio layout with header
@@ -46,6 +50,7 @@ src/
     get-crypto-assets.ts  # Fetch transactions from Supabase (cached)
     get-data.ts           # Fetch ticker/price data from Supabase (cached)
     sb-login-action.ts    # Server action for authentication
+    update-tickers-prices.ts  # Fetch & update current prices (Coinbase + Yahoo Finance)
   lib/
     calculations.ts       # Pure calculation functions (DCA, P&L, holdings aggregation)
     formaters.ts          # Currency/date/percentage formatters (Intl API)
@@ -67,6 +72,7 @@ src/
     globals.css           # Global CSS with @theme inline tokens
     theme-typographic.css # Typography tokens
   proxy.ts                # Next.js middleware (CSP + Supabase auth proxy)
+instrumentation-client.ts # BotId client-side initialization
 scripts/
   convert-to-webp.ts      # Converts all non-WebP images in public/assets to WebP
   generate-keys.ts        # Generates private API keys
@@ -86,22 +92,33 @@ scripts/
 5. Unauthenticated users accessing `/portfolio` are redirected to `/`
 
 ### Server Client
-- `createSbServerClient(hooks?)` in `lib/utils.server.ts` creates a per-request Supabase client using `@supabase/ssr` with cookie-based session management
+- `createSbServerClient(useSecretKey?, hooks?)` in `lib/utils.server.ts` creates a per-request Supabase client using `@supabase/ssr` with cookie-based session management
+- `useSecretKey` (default `false`): when `true`, uses the service role key to bypass RLS — use only for server-to-server operations (cron jobs, webhooks) with no user session
 - Accepts optional `hooks` parameter with `onGetAll` and `onSetAll` callbacks that run **after** the default cookie handlers (used by `sbProxy` to sync cookies onto middleware request/response)
 - Always create a new client per request (required for Fluid compute)
 
+### Automatic Price Updates
+- **API endpoint**: `POST /api/updateTickers` — fetches current prices from Coinbase (crypto) and Yahoo Finance (stocks/ETFs), updates `data` table
+- **Auth**: `x-api-key` header (timing-safe comparison) or authenticated Supabase user session
+- **Bot protection**: `checkBotId()` blocks automated requests in production
+- **Supabase cron**: `invoke_update_tickers()` SQL function calls the endpoint every 4 hours via `pg_net`
+- **Secrets**: API key and endpoint URL stored in Supabase Vault (`update_tickers_api_key`, `update_tickers_url`)
+
 ### Data Fetching
 - Services use `server-only` import guard
-- `unstable_cache` from Next.js with 60s revalidation and tagged cache keys
+- `unstable_cache` from Next.js with 4h revalidation and tagged cache keys
 - `tryCatch` wrapper for consistent error handling — returns `{ data, error }`
 - Data flows as props from Server Components (no client-side state management)
 
 ### Environment Variables
 ```
-NEXT_SUPABASE_URL          # Supabase project URL
-NEXT_SUPABASE_PUBLISHABLE_KEY  # Supabase publishable key
-NEXT_SUPABASE_ANON_KEY     # Supabase anon key
-NEXT_PUBLIC_VERCEL_URL     # Vercel deployment URL (auto-set)
+NEXT_SUPABASE_URL               # Supabase project URL
+NEXT_SUPABASE_PUBLISHABLE_KEY   # Supabase publishable key
+NEXT_SUPABASE_ANON_KEY          # Supabase anon key
+NEXT_SUPABASE_SERVICE_ROLE_KEY  # Supabase service role key (bypasses RLS)
+NEXT_COINBASE_SECRET_KEY        # Coinbase API key for crypto prices
+NEXT_UPDATE_TICKERS_SECRET_KEY  # API key for /api/updateTickers endpoint
+NEXT_PUBLIC_VERCEL_URL          # Vercel deployment URL (auto-set)
 ```
 
 ## Supported Assets
@@ -148,6 +165,15 @@ Transaction types: `BUY`, `SELL`, `REWARD`, `FEE`
 - CSP headers set via `set-csp.ts` in middleware
 - HSTS, X-Frame-Options, Referrer-Policy configured
 - Static file prefixes: `/_next`, `/api/`, `/assets`, `/favicon`, `/robots.txt`, `/script`
+- **Bot Protection**: Vercel BotId via `botid` package
+
+### Bot Protection (Vercel BotId)
+- **Client-side**: `instrumentation-client.ts` calls `initBotId()` with protected routes
+- **Server-side**: `checkBotId()` from `botid/server` in API route handlers
+- **Config**: `withBotId()` wraps `next.config.ts` for proxy rewrites
+- Protected routes: `/api/updateTickers` (POST), `/portfolio` (*), `/` (*)
+- In development, BotId always returns `isBot: false` — only active in production on Vercel
+- Deep Analysis enabled via Vercel Dashboard → Firewall → Rules
 
 ### Code Quality
 - No barrel exports (index.ts re-exports)
@@ -220,5 +246,4 @@ Follow these skills for all development:
 
 ## Future Plans
 
-- Real-time price API integration
 - Transaction CRUD UI (add/edit/delete transactions in-app)
