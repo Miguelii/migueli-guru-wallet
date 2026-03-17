@@ -11,15 +11,11 @@ Ticker prices are updated automatically every 4 hours via a Supabase cron job th
 - **Crypto prices**: Coinbase API
 - **Stocks/ETFs**: Yahoo Finance
 
-## Bot Protection (Vercel BotId)
+## Vercel BotId
 
 Vercel BotID is an invisible CAPTCHA that protects against sophisticated bots without showing visible challenges or requiring user action.
 
-Protected routes:
-
-- `POST /api/updateTickers`
-- `/portfolio` (all methods)
-- `/` (all methods)
+Protects page's and api's routes (`instrumentation-client.ts`)
 
 ## Code Quality Tools
 
