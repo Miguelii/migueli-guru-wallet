@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import type { TickerData } from '@/types/Transaction'
 import { formatCurrency } from '@/lib/formaters'
 import { getBuildId, getLatestUpdate } from '@/lib/utils'
+import { PUBLIC_ASSET_BUCKET_PATH } from '@/lib/utils.server'
 
 type Props = {
     data: TickerData[]
@@ -21,7 +22,7 @@ export function CurrentPricesBadges({ data }: Props) {
                         className="flex items-center gap-1.5 shrink-0 px-2.5 py-2 h-10 cursor-pointer hover:bg-accent transition-colors"
                     >
                         <Image
-                            src={`${td.logo}?v=${buildId}`}
+                            src={`${PUBLIC_ASSET_BUCKET_PATH}/${td.logo}?v=${buildId}`}
                             alt={td.ticker}
                             width={16}
                             height={16}

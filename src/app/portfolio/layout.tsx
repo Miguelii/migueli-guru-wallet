@@ -1,11 +1,12 @@
 import { AppSidebar } from '@/components/app-sidebar'
 import { RefreshApp } from '@/components/refresh-app'
+import { SignOutApp } from '@/components/sign-out-app'
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 
 type Props = LayoutProps<'/portfolio'>
 
-export default function PortfolioDashboard({ children }: Props) {
+export default async function PortfolioDashboard({ children }: Props) {
     return (
         <SidebarProvider
             style={
@@ -22,7 +23,10 @@ export default function PortfolioDashboard({ children }: Props) {
                         <SidebarTrigger className="-ml-1 h-8 cursor-pointer" />
                         <Separator orientation="vertical" className="mx-2 h-4 top-4 relative" />
                         <h1 className="text-base font-bold w-full">Portfolio</h1>
-                        <RefreshApp />
+                        <div className="flex flex-row gap-3">
+                            <RefreshApp />
+                            <SignOutApp />
+                        </div>
                     </div>
                     {children}
                 </div>

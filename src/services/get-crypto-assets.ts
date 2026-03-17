@@ -8,7 +8,7 @@ import { SbTables } from '@/types/SbTables'
 import { unstable_cache } from 'next/cache'
 import type { SbClient } from '@/types/SbClient'
 
-const getCryptoAssetsFn = (supabase: SbClient) =>
+const getCryptoAssetsFn = (supabase: SbClient, userId: string) =>
     unstable_cache(
         async () => {
             const { data, error } = await supabase
@@ -20,7 +20,7 @@ const getCryptoAssetsFn = (supabase: SbClient) =>
 
             return data as Transaction[]
         },
-        [GET_CRYPTO_ASSETS_CACHE_KEY],
+        [GET_CRYPTO_ASSETS_CACHE_KEY, userId],
         {
             revalidate: GET_CRYPTO_ASSETS_REVALIDATE_TIME,
             tags: [GET_CRYPTO_ASSETS_CACHE_KEY],
@@ -29,7 +29,17 @@ const getCryptoAssetsFn = (supabase: SbClient) =>
 
 export async function getCryptoAssets(): Promise<Transaction[]> {
     const supabase = await createSbServerClient()
-    const { data, error } = await tryCatch(getCryptoAssetsFn(supabase), 'getCryptoAssets')
+
+    const session = await supabase.auth.getClaims()
+
+    const user = session?.data?.claims
+
+    if (!user) return []
+
+    const { data, error } = await tryCatch(
+        getCryptoAssetsFn(supabase, user.session_id),
+        'getCryptoAssets'
+    )
 
     if (error) return []
 

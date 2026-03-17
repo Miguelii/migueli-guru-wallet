@@ -1,3 +1,4 @@
+import { HOME_PAGE_PATH, PRIVATE_ROUTE_PATH, UPDATE_TICKERS_API_PATH } from '@/lib/constants'
 import { initBotId } from 'botid/client/core'
 
 // Define the paths that need bot protection.
@@ -9,15 +10,15 @@ import { initBotId } from 'botid/client/core'
 initBotId({
     protect: [
         {
-            path: '/api/updateTickers',
+            path: UPDATE_TICKERS_API_PATH,
             method: 'POST',
         },
         {
-            path: '/portfolio',
+            path: PRIVATE_ROUTE_PATH,
             method: '*',
         },
         {
-            path: '/',
+            path: HOME_PAGE_PATH,
             method: '*',
         },
     ],

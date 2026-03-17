@@ -1,6 +1,5 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { HOME_PAGE_URL } from '@/lib/constants'
 import type { TickerData } from '@/types/Transaction'
 
 /**
@@ -20,14 +19,6 @@ export function cn(...inputs: ClassValue[]) {
 export const getBuildId = () => {
     return process.env.NEXT_PUBLIC_BUILD_TIMESTAMP ?? '1'
 }
-
-/**
- * Strips trailing slashes from a URL path.
- * Returns `HOME_PAGE_URL` for empty strings.
- * @param path - The URL path to normalize.
- * @public
- */
-export const normalizePath = (path: string) => path.replace(/\/$/, '') || HOME_PAGE_URL
 
 /**
  * Finds the most recently updated ticker and returns its `last_updated_at` timestamp.

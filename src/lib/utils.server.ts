@@ -5,7 +5,7 @@ import type { GetAllCookies, SetAllCookies } from '@supabase/ssr/dist/main/types
 import { cookies } from 'next/headers'
 import { ServerEnv } from '@/env/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { PRIVATE_ROUTE_PAGE, STATIC_PREFIXES } from '@/lib/constants'
+import { HOME_PAGE_PATH, PRIVATE_ROUTE_PATH, STATIC_PREFIXES } from '@/lib/constants'
 import { timingSafeEqual } from 'node:crypto'
 
 /**
@@ -101,9 +101,15 @@ export async function sbProxy(request: NextRequest) {
 
     const user = data?.claims
 
-    if (!user && request.nextUrl.pathname.startsWith(PRIVATE_ROUTE_PAGE)) {
+    if (!user && request.nextUrl.pathname.startsWith(PRIVATE_ROUTE_PATH)) {
         const url = request.nextUrl.clone()
-        url.pathname = '/'
+        url.pathname = HOME_PAGE_PATH
+        return NextResponse.redirect(url)
+    }
+
+    if (request.nextUrl.pathname === HOME_PAGE_PATH && user != null) {
+        const url = request.nextUrl.clone()
+        url.pathname = PRIVATE_ROUTE_PATH
         return NextResponse.redirect(url)
     }
 
@@ -133,3 +139,5 @@ export function verifyApiKey(apiKey: string, expected: string): boolean {
 
     return timingSafeEqual(Buffer.from(apiKey), Buffer.from(expected))
 }
+
+export const PUBLIC_ASSET_BUCKET_PATH = `${ServerEnv.NEXT_SUPABASE_URL}/storage/v1/object/public/public_assets`

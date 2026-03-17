@@ -7,9 +7,11 @@ export const NEXT_IMAGE_PATH = '/_next/image'
 
 export const STATIC_PREFIXES = ['/_next', '/api/', '/assets', '/favicon', '/robots.txt', '/script']
 
-export const HOME_PAGE_URL = '/' as const
+export const HOME_PAGE_PATH = '/' as const
 
-export const PRIVATE_ROUTE_PAGE = '/portfolio'
+export const UPDATE_TICKERS_API_PATH = '/api/updateTickers' as const
+
+export const PRIVATE_ROUTE_PATH = '/portfolio' as const
 
 export const GET_DATA_CACHE_KEY = 'getData'
 

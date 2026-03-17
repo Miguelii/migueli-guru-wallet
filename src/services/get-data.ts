@@ -8,7 +8,7 @@ import { type TickerData } from '@/types/Transaction'
 import { unstable_cache } from 'next/cache'
 import type { SbClient } from '@/types/SbClient'
 
-const getDataFn = (supabase: SbClient) =>
+const getDataFn = (supabase: SbClient, userId: string) =>
     unstable_cache(
         async () => {
             const { data, error } = await supabase.from(SbTables.DATA).select('*').order('ticker')
@@ -17,7 +17,7 @@ const getDataFn = (supabase: SbClient) =>
 
             return data as TickerData[]
         },
-        [GET_DATA_CACHE_KEY],
+        [GET_DATA_CACHE_KEY, userId],
         {
             revalidate: GET_DATA_REVALIDATE_TIME,
             tags: [GET_DATA_CACHE_KEY],
@@ -26,7 +26,14 @@ const getDataFn = (supabase: SbClient) =>
 
 export async function getData(): Promise<TickerData[]> {
     const supabase = await createSbServerClient()
-    const { data, error } = await tryCatch(getDataFn(supabase), 'getData')
+
+    const session = await supabase.auth.getClaims()
+
+    const user = session?.data?.claims
+
+    if (!user) return []
+
+    const { data, error } = await tryCatch(getDataFn(supabase, user.session_id), 'getData')
 
     if (error) return []
 

@@ -17,6 +17,7 @@ import Image from 'next/image'
 import { LayoutList } from 'lucide-react'
 import type { HoldingSummary } from '@/types/Holding'
 import { cn, getBuildId } from '@/lib/utils'
+import { PUBLIC_ASSET_BUCKET_PATH } from '@/lib/utils.server'
 
 type Props = {
     holdings: HoldingSummary[]
@@ -29,7 +30,7 @@ export function HoldingsCard({ holdings }: Props) {
         <Card className="shadow-sm">
             <CardHeader className="flex flex-row items-center gap-2">
                 <LayoutList className="h-5 w-5 text-muted-foreground" />
-                <CardTitle>Your Holdings</CardTitle>
+                <CardTitle>Holdings</CardTitle>
             </CardHeader>
             <CardContent className="overflow-x-auto">
                 <Table>
@@ -58,7 +59,7 @@ export function HoldingsCard({ holdings }: Props) {
                                 <TableCell className="font-medium">
                                     <div className="flex items-center gap-2">
                                         <Image
-                                            src={`${h.tickerLogo}?v=${buildId}`}
+                                            src={`${PUBLIC_ASSET_BUCKET_PATH}/${h.tickerLogo}?v=${buildId}`}
                                             alt={h.symbol}
                                             width={24}
                                             height={24}

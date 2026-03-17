@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation'
 import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { sbLoginAction } from '@/services/sb-login-action'
 import { toast } from 'sonner'
+import { PRIVATE_ROUTE_PATH } from '@/lib/constants'
 
 const loginSchema = z.object({
     email: z.email('Please enter a valid email address'),
@@ -36,7 +37,7 @@ export function AuthCard() {
                 ...data,
             })
             if (res.status == 200) {
-                router.push('/portfolio')
+                router.push(PRIVATE_ROUTE_PATH)
             } else {
                 toast.error(`Ocorreu um erro! ${res.error ?? 'Unknow Error'}`)
             }

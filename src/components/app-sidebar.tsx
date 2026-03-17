@@ -16,6 +16,7 @@ import {
 import { LayoutDashboardIcon, type LucideProps } from 'lucide-react'
 import Image from 'next/image'
 import { getBuildId } from '@/lib/utils'
+import { PRIVATE_ROUTE_PATH } from '@/lib/constants'
 
 type NavIcon = React.ForwardRefExoticComponent<
     Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
@@ -31,7 +32,7 @@ const data: { navMain: NavMain[] } = {
     navMain: [
         {
             title: 'Dashboard',
-            url: '/portfolio',
+            url: PRIVATE_ROUTE_PATH,
             Icon: LayoutDashboardIcon,
         },
     ],

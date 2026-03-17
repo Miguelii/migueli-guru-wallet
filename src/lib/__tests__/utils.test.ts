@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { cn, getBuildId, normalizePath, getLatestUpdate } from '@/lib/utils'
+import { cn, getBuildId, getLatestUpdate } from '@/lib/utils'
 import type { TickerData } from '@/types/Transaction'
 import { Ticker } from '@/types/Transaction'
 
@@ -57,30 +57,6 @@ describe('getBuildId', () => {
 
     it('should fall back to "1" when env variable is not set', () => {
         expect(getBuildId()).toBe('1')
-    })
-})
-
-// ─── normalizePath ───────────────────────────────────────────────────────────
-
-describe('normalizePath', () => {
-    it('should strip trailing slash', () => {
-        expect(normalizePath('/portfolio/')).toBe('/portfolio')
-    })
-
-    it('should return path as-is when no trailing slash', () => {
-        expect(normalizePath('/portfolio')).toBe('/portfolio')
-    })
-
-    it('should return HOME_PAGE_URL for root slash', () => {
-        expect(normalizePath('/')).toBe('/')
-    })
-
-    it('should handle nested paths', () => {
-        expect(normalizePath('/portfolio/settings/')).toBe('/portfolio/settings')
-    })
-
-    it('should only strip the last trailing slash', () => {
-        expect(normalizePath('/a/b/c/')).toBe('/a/b/c')
     })
 })
 

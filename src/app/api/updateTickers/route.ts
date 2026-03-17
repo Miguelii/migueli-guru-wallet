@@ -1,5 +1,9 @@
 import { ServerEnv } from '@/env/server'
-import { GET_CRYPTO_ASSETS_CACHE_KEY, GET_DATA_CACHE_KEY } from '@/lib/constants'
+import {
+    GET_CRYPTO_ASSETS_CACHE_KEY,
+    GET_DATA_CACHE_KEY,
+    PRIVATE_ROUTE_PATH,
+} from '@/lib/constants'
 import { tryCatch } from '@/lib/try-catch'
 import { updateTickersPrices } from '@/services/update-tickers-prices'
 import { createSbServerClient, verifyApiKey } from '@/lib/utils.server'
@@ -46,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     revalidateTag(GET_CRYPTO_ASSETS_CACHE_KEY, 'max')
 
-    revalidatePath('/portfolio', 'layout')
+    revalidatePath(PRIVATE_ROUTE_PATH, 'layout')
 
     return NextResponse.json({ status: 200 })
 }
