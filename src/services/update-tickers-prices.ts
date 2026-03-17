@@ -71,9 +71,11 @@ async function getCoinbasePrice(tick: TickerData): Promise<number | null> {
             }
         )
 
-        if (!res.ok) throw new Error(`Fetch Failed status=${res.status}`)
+        if (!res.ok) throw new Error(`Fetch Failed status=${res.status} tick=${tick.ticker}`)
 
         const json: CoinbaseJson = await res.json()
+
+        console.log({ json })
 
         if (json?.data?.amount) {
             return Number(json?.data?.amount)
@@ -95,10 +97,11 @@ async function getFinancePrice(tick: TickerData): Promise<number | null> {
 
         const quote = await yahooFinance.quote(tickerToSearch)
 
-        if (quote?.ask) {
-            return Number(quote?.ask)
-        }
-        return null
+        console.log({ quote })
+
+        if (quote.ask == null) throw new Error(`Fetch Failed quote as is null tick=${tick.ticker}`)
+
+        return Number(quote?.ask)
     }, `getFinancePrice-${tick.ticker}`)
 
     if (error || data == null) return null
