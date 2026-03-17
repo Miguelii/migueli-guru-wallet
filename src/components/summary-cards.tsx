@@ -1,5 +1,4 @@
 import type { HoldingSummary } from '@/types/Holding'
-import { CryptoTickerSet, ETFTickerSet, StockTickerSet } from '@/lib/constants'
 import { formatCurrency, formatPercentage, formatSignedCurrency } from '@/lib/formaters'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Wallet, Bitcoin, BarChart3, TrendingUp } from 'lucide-react'
@@ -11,9 +10,9 @@ type Props = {
 }
 
 export function SummaryCards({ holdings }: Props) {
-    const cryptoHoldings = holdings.filter((h) => CryptoTickerSet.has(h.ticker_id))
-    const etfHoldings = holdings.filter((h) => ETFTickerSet.has(h.ticker_id))
-    const stockHoldings = holdings.filter((h) => StockTickerSet.has(h.ticker_id))
+    const cryptoHoldings = holdings.filter((h) => h.tickerType === 'CRYPTO')
+    const etfHoldings = holdings.filter((h) => h.tickerType === 'ETF')
+    const stockHoldings = holdings.filter((h) => h.tickerType === 'STOCK')
 
     return (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">

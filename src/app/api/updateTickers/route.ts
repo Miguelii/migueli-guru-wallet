@@ -5,6 +5,7 @@ import { updateTickersPrices } from '@/services/update-tickers-prices'
 import { createSbServerClient, verifyApiKey } from '@/lib/utils.server'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { type NextRequest, NextResponse } from 'next/server'
+import { checkBotId } from 'botid/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,6 +27,11 @@ export async function POST(request: NextRequest) {
 
     if (!authorized) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { isBot } = await checkBotId()
+    if (isBot) {
+        return NextResponse.json({ error: 'Not Acceptable' }, { status: 406 })
     }
 
     const { data, error } = await tryCatch(async () => {

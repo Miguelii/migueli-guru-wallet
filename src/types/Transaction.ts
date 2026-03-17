@@ -22,6 +22,7 @@ export enum Ticker {
     BTC = 'BTC',
     ATCH = 'ATCH',
     VUAA = 'VUAA',
+    MON = 'MON',
 }
 
 export type TickerData = {
@@ -33,4 +34,5 @@ export type TickerData = {
     symbol: '€' | '$'
     logo: `/assets/${string}`
     hex_color: `#${number}`
+    type: 'CRYPTO' | 'ETF' | 'STOCK'
 }

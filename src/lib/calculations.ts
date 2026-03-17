@@ -129,6 +129,7 @@ function buildHolding(
         tickerLogo: td?.logo as TickerData['logo'],
         tickerHexColor: td?.hex_color as TickerData['hex_color'],
         currency: td?.currency ?? 'EUR',
+        tickerType: td?.type as TickerData['type'],
         total_quantity: totalQuantity,
         total_invested: totalInvested,
         total_fees: totalFees,

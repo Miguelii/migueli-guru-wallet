@@ -3,6 +3,7 @@
 import { tryCatch } from '@/lib/try-catch'
 import { createSbServerClient } from '@/lib/utils.server'
 import { z } from 'zod'
+import { checkBotId } from 'botid/server'
 
 const loginSchema = z.object({
     email: z.email(),
@@ -23,6 +24,9 @@ export async function sbLoginAction(props: Props): Promise<Return> {
         if (!result.success) {
             throw new Error('Invalid Request')
         }
+
+        const { isBot } = await checkBotId()
+        if (isBot) throw new Error('BOT DETECTED!')
 
         const supabase = await createSbServerClient()
 

@@ -93,6 +93,7 @@ const baseTicker: Omit<TickerData, 'ticker' | 'last_updated_at'> = {
     symbol: '€',
     logo: '/assets/ethereum.webp',
     hex_color: '#627EEA' as TickerData['hex_color'],
+    type: 'CRYPTO',
 }
 
 describe('getLatestUpdate', () => {
