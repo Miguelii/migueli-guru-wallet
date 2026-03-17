@@ -16,7 +16,7 @@ import {
 import Image from 'next/image'
 import { LayoutList } from 'lucide-react'
 import type { HoldingSummary } from '@/types/Holding'
-import { getBuildId } from '@/lib/utils'
+import { cn, getBuildId } from '@/lib/utils'
 
 type Props = {
     holdings: HoldingSummary[]
@@ -89,32 +89,50 @@ export function HoldingsCard({ holdings }: Props) {
                                     {formatCurrency(h.avg_cost_per_share, h.currency)}
                                 </TableCell>
                                 <TableCell
-                                    className={`text-right tabular-nums ${h.realized_gl >= 0 ? 'text-success' : 'text-destructive'}`}
+                                    className={cn('text-right tabular-nums', {
+                                        'text-success': h.realized_gl >= 0,
+                                        'text-destructive': h.realized_gl < 0,
+                                    })}
                                 >
                                     {formatSignedCurrency(h.realized_gl, h.currency)}
                                 </TableCell>
                                 <TableCell
-                                    className={`text-right tabular-nums ${h.realized_gl_pct >= 0 ? 'text-success' : 'text-destructive'}`}
+                                    className={cn('text-right tabular-nums', {
+                                        'text-success': h.realized_gl_pct >= 0,
+                                        'text-destructive': h.realized_gl_pct < 0,
+                                    })}
                                 >
                                     {formatPercentage(h.realized_gl_pct)}
                                 </TableCell>
                                 <TableCell
-                                    className={`text-right tabular-nums ${h.total_gl >= 0 ? 'text-success' : 'text-destructive'}`}
+                                    className={cn('text-right tabular-nums', {
+                                        'text-success': h.total_gl >= 0,
+                                        'text-destructive': h.total_gl < 0,
+                                    })}
                                 >
                                     {formatSignedCurrency(h.total_gl, h.currency)}
                                 </TableCell>
                                 <TableCell
-                                    className={`text-right tabular-nums ${h.total_gl_pct >= 0 ? 'text-success' : 'text-destructive'}`}
+                                    className={cn('text-right tabular-nums', {
+                                        'text-success': h.total_gl_pct >= 0,
+                                        'text-destructive': h.total_gl_pct < 0,
+                                    })}
                                 >
                                     {formatPercentage(h.total_gl_pct)}
                                 </TableCell>
                                 <TableCell
-                                    className={`text-right tabular-nums ${h.total_gl_with_fees >= 0 ? 'text-success' : 'text-destructive'}`}
+                                    className={cn('text-right tabular-nums', {
+                                        'text-success': h.total_gl_with_fees >= 0,
+                                        'text-destructive': h.total_gl_with_fees < 0,
+                                    })}
                                 >
                                     {formatSignedCurrency(h.total_gl_with_fees, h.currency)}
                                 </TableCell>
                                 <TableCell
-                                    className={`text-right tabular-nums ${h.total_gl_with_fees_pct >= 0 ? 'text-success' : 'text-destructive'}`}
+                                    className={cn('text-right tabular-nums', {
+                                        'text-success': h.total_gl_with_fees_pct >= 0,
+                                        'text-destructive': h.total_gl_with_fees_pct < 0,
+                                    })}
                                 >
                                     {formatPercentage(h.total_gl_with_fees_pct)}
                                 </TableCell>

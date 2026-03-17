@@ -2,7 +2,7 @@
 
 Private app for tracking my Crypto, ETF, and Stock investments
 
-![alt text](/public/assets/app_preview.png)
+![alt text](/public/assets/preview.webp)
 
 ## Code Quality Tools
 

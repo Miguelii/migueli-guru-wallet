@@ -34,7 +34,7 @@ export function RefreshApp() {
             size="icon"
             onClick={onClick}
             disabled={isPending}
-            className="h-12 w-fit cursor-pointer px-2.5 flex flex-row gap-1.5 border border-muted-foreground"
+            className="h-12 w-fit cursor-pointer px-2.5 flex flex-row gap-1.5 border ring-1 ring-foreground/10"
         >
             {isPending ? (
                 <Loader2Icon className="size-4 animate-spin" />

@@ -11,7 +11,10 @@ import type { SbClient } from '@/types/SbClient'
 const getCryptoAssetsFn = (supabase: SbClient) =>
     unstable_cache(
         async () => {
-            const { data, error } = await supabase.from(SbTables.TRANSACTIONS).select('*')
+            const { data, error } = await supabase
+                .from(SbTables.TRANSACTIONS)
+                .select('*')
+                .order('buy_date', { ascending: false })
 
             if (error) throw error
 

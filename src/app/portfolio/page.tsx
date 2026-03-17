@@ -23,10 +23,8 @@ export default async function PortfolioPage() {
 
             <SummaryCards holdings={holdings} />
 
-            <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                    <TransactionsCard transactions={transactions} tickerData={data} />
-                </div>
+            <section className="flex flex-col lg:flex-row gap-6">
+                <TransactionsCard transactions={transactions} tickerData={data} />
                 <AllocationCardWithChart holdings={holdings} />
             </section>
 

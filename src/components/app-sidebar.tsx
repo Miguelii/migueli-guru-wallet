@@ -5,6 +5,7 @@ import * as React from 'react'
 import {
     Sidebar,
     SidebarContent,
+    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarHeader,
@@ -65,6 +66,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarContent>
                 <NavMain items={data.navMain} />
             </SidebarContent>
+            <SidebarFooter className="p-3">
+                <Image
+                    src={`/assets/funny.webp?v=${buildId}`}
+                    width={280}
+                    height={200}
+                    className="w-full rounded-lg"
+                    alt="Vais ser pobre para sempre"
+                    unoptimized
+                />
+            </SidebarFooter>
         </Sidebar>
     )
 }
@@ -78,7 +89,7 @@ function NavMain({ items }: { items: NavMain[] }) {
                         const Icon = item.Icon
                         return (
                             <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton tooltip={item.title}>
+                                <SidebarMenuButton tooltip={item.title} className="cursor-pointer!">
                                     {Icon && <Icon />}
                                     <span>{item.title}</span>
                                 </SidebarMenuButton>

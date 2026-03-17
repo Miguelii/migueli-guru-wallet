@@ -9,7 +9,7 @@ type Props = {
 
 export function AllocationCardWithChart({ holdings }: Props) {
     return (
-        <Card className="h-92.5 w-full shadow-sm">
+        <Card className="h-92.5 w-full lg:w-[40%]! shadow-sm">
             <CardHeader className="flex flex-row items-center gap-2">
                 <PieChart className="h-5 w-5 text-muted-foreground" />
                 <CardTitle>Allocation</CardTitle>

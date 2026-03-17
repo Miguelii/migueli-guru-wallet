@@ -2,17 +2,34 @@ import type { Ticker, TickerData, Transaction } from '@/types/Transaction'
 import { TransactionType } from '@/types/Transaction'
 import type { HoldingSummary } from '@/types/Holding'
 
-/**
- * Groups transactions by ticker_id and computes aggregated holding metrics.
- * Uses weighted average cost (DCA) method.
- */
-export function aggregateHoldings(
-    transactions: Transaction[],
-    tickerData: TickerData[]
-): HoldingSummary[] {
-    // Build lookup map from TickerData array
-    const tickerDataMap = new Map<Ticker, TickerData>(tickerData.map((td) => [td.ticker, td]))
+type CostBasis = {
+    totalQuantity: number
+    totalInvested: number
+    totalFees: number
+    avgCost: number
+}
 
+type RealizedMetrics = {
+    totalQuantity: number
+    totalInvested: number
+    realizedGl: number
+    realizedCostBasis: number
+}
+
+/**
+ * Computes the safe percentage ratio, returning `0` when the denominator is zero.
+ * @param numerator - The dividend value.
+ * @param denominator - The divisor value.
+ */
+function pct(numerator: number, denominator: number): number {
+    return denominator !== 0 ? (numerator / denominator) * 100 : 0
+}
+
+/**
+ * Groups an array of transactions by `ticker_id`.
+ * @param transactions - Flat array of all transactions.
+ */
+function groupByTicker(transactions: Transaction[]): Map<Ticker, Transaction[]> {
     const grouped = new Map<Ticker, Transaction[]>()
 
     for (const tx of transactions) {
@@ -24,97 +41,130 @@ export function aggregateHoldings(
         }
     }
 
+    return grouped
+}
+
+/**
+ * First pass over transactions: accumulates BUY/REWARD quantities,
+ * invested totals, and fees to build the cost basis.
+ * @param txs - Transactions for a single ticker.
+ */
+function buildCostBasis(txs: Transaction[]): CostBasis {
+    let totalQuantity = 0
+    let totalInvested = 0
+    let totalFees = 0
+
+    for (const tx of txs) {
+        if (tx.type === TransactionType.Buy) {
+            totalQuantity += tx.quantity ?? 0
+            totalInvested += tx.value ?? 0
+        } else if (tx.type === TransactionType.Reward) {
+            totalQuantity += tx.quantity ?? 0
+        }
+        totalFees += tx.fee
+    }
+
+    const avgCost = totalQuantity > 0 ? totalInvested / totalQuantity : 0
+
+    return { totalQuantity, totalInvested, totalFees, avgCost }
+}
+
+/**
+ * Second pass over transactions: processes SELL operations using the
+ * weighted average cost to compute realized gains/losses.
+ * @param txs - Transactions for a single ticker.
+ * @param basis - The cost basis computed from the first pass.
+ */
+function applysells(txs: Transaction[], basis: CostBasis): RealizedMetrics {
+    let { totalQuantity, totalInvested } = basis
+    let realizedGl = 0
+    let realizedCostBasis = 0
+
+    for (const tx of txs) {
+        if (tx.type !== TransactionType.Sell) continue
+
+        const costOfSold = basis.avgCost * (tx.quantity ?? 0)
+        realizedGl += (tx.value ?? 0) - costOfSold
+        realizedCostBasis += costOfSold
+        totalQuantity -= tx.quantity ?? 0
+        totalInvested -= costOfSold
+    }
+
+    return { totalQuantity, totalInvested, realizedGl, realizedCostBasis }
+}
+
+/**
+ * Builds a single {@link HoldingSummary} from a ticker's transactions and market data.
+ * @param tickerId - The ticker identifier.
+ * @param txs - All transactions for this ticker.
+ * @param td - Ticker metadata and current price (may be `undefined` if missing).
+ */
+function buildHolding(
+    tickerId: Ticker,
+    txs: Transaction[],
+    td: TickerData | undefined
+): HoldingSummary {
+    const basis = buildCostBasis(txs)
+    const sells = applysells(txs, basis)
+
+    const { totalQuantity, totalInvested, realizedGl, realizedCostBasis } = sells
+    const { totalFees } = basis
+
+    const currentPrice = td?.curr_price ?? 0
+    const currentValue = totalQuantity * currentPrice
+    const avgCostPerShare = totalQuantity > 0 ? totalInvested / totalQuantity : basis.avgCost
+
+    const unrealizedGl = currentValue - totalInvested
+    const costBasis = totalInvested + totalFees
+    const unrealizedGlWithFees = currentValue - costBasis
+
+    const totalGl = realizedGl + unrealizedGl
+    const totalCostBasis = totalInvested + realizedCostBasis
+    const totalGlWithFees = totalGl - totalFees
+    const totalCostBasisWithFees = totalCostBasis + totalFees
+
+    return {
+        ticker_id: tickerId,
+        symbol: tickerId,
+        tickerLogo: td?.logo as TickerData['logo'],
+        tickerHexColor: td?.hex_color as TickerData['hex_color'],
+        currency: td?.currency ?? 'EUR',
+        total_quantity: totalQuantity,
+        total_invested: totalInvested,
+        total_fees: totalFees,
+        current_price: currentPrice,
+        current_value: currentValue,
+        avg_cost_per_share: avgCostPerShare,
+        realized_gl: realizedGl,
+        realized_gl_pct: pct(realizedGl, realizedCostBasis),
+        unrealized_gl: unrealizedGl,
+        unrealized_gl_pct: pct(unrealizedGl, totalInvested),
+        unrealized_gl_with_fees: unrealizedGlWithFees,
+        unrealized_gl_with_fees_pct: pct(unrealizedGlWithFees, costBasis),
+        total_gl: totalGl,
+        total_gl_pct: pct(totalGl, totalCostBasis),
+        total_gl_with_fees: totalGlWithFees,
+        total_gl_with_fees_pct: pct(totalGlWithFees, totalCostBasisWithFees),
+    }
+}
+
+/**
+ * Groups transactions by ticker and computes aggregated holding metrics.
+ * Uses weighted average cost (DCA) method — not FIFO/LIFO.
+ * @param transactions - All portfolio transactions.
+ * @param tickerData - Ticker metadata with current prices.
+ */
+export function aggregateHoldings(
+    transactions: Transaction[],
+    tickerData: TickerData[]
+): HoldingSummary[] {
+    const tickerDataMap = new Map<Ticker, TickerData>(tickerData.map((td) => [td.ticker, td]))
+    const grouped = groupByTicker(transactions)
+
     const holdings: HoldingSummary[] = []
 
     for (const [tickerId, txs] of grouped) {
-        const td = tickerDataMap.get(tickerId)
-        const symbol = tickerId
-        const currency = td?.currency ?? 'EUR'
-        const tickerLogo = td?.logo as TickerData['logo']
-        const tickerHexColor = td?.hex_color as TickerData['hex_color']
-
-        let totalQuantity = 0
-        let totalInvested = 0
-        let totalFees = 0
-        let realizedGl = 0
-        let realizedCostBasis = 0
-
-        // First pass: process BUY, REWARD, and FEE to build cost basis
-        for (const tx of txs) {
-            if (tx.type === TransactionType.Buy) {
-                totalQuantity += tx.quantity ?? 0
-                totalInvested += tx.value ?? 0
-            } else if (tx.type === TransactionType.Reward) {
-                // Staking rewards: free tokens, only increase quantity
-                totalQuantity += tx.quantity ?? 0
-            }
-            // Fee-only transactions (service charges) and per-tx fees both accumulate
-            totalFees += tx.fee
-        }
-
-        // Compute avg cost before processing sells
-        const avgCost = totalQuantity > 0 ? totalInvested / totalQuantity : 0
-
-        // Second pass: process SELL using weighted average cost
-        for (const tx of txs) {
-            if (tx.type === TransactionType.Sell) {
-                const costOfSold = avgCost * (tx.quantity ?? 0)
-                realizedGl += (tx.value ?? 0) - costOfSold
-                realizedCostBasis += costOfSold
-                totalQuantity -= tx.quantity ?? 0
-                totalInvested -= costOfSold
-            }
-        }
-
-        const currentPrice = td?.curr_price ?? 0
-        const currentValue = totalQuantity * currentPrice
-        const avgCostPerShare = totalQuantity > 0 ? totalInvested / totalQuantity : avgCost
-
-        // Realized G/L percentage (relative to cost basis of sold shares)
-        const realizedGlPct = realizedCostBasis !== 0 ? (realizedGl / realizedCostBasis) * 100 : 0
-
-        // Unrealized G/L (open positions only)
-        const unrealizedGl = currentValue - totalInvested
-        const unrealizedGlPct = totalInvested !== 0 ? (unrealizedGl / totalInvested) * 100 : 0
-
-        const costBasis = totalInvested + totalFees
-        const unrealizedGlWithFees = currentValue - costBasis
-        const unrealizedGlWithFeesPct =
-            costBasis !== 0 ? (unrealizedGlWithFees / costBasis) * 100 : 0
-
-        // Total G/L = realized + unrealized
-        const totalGl = realizedGl + unrealizedGl
-        const totalCostBasis = totalInvested + realizedCostBasis
-        const totalGlPct = totalCostBasis !== 0 ? (totalGl / totalCostBasis) * 100 : 0
-
-        const totalGlWithFees = totalGl - totalFees
-        const totalCostBasisWithFees = totalCostBasis + totalFees
-        const totalGlWithFeesPct =
-            totalCostBasisWithFees !== 0 ? (totalGlWithFees / totalCostBasisWithFees) * 100 : 0
-
-        holdings.push({
-            ticker_id: tickerId,
-            symbol,
-            tickerLogo,
-            tickerHexColor,
-            currency,
-            total_quantity: totalQuantity,
-            total_invested: totalInvested,
-            total_fees: totalFees,
-            current_price: currentPrice,
-            current_value: currentValue,
-            avg_cost_per_share: avgCostPerShare,
-            realized_gl: realizedGl,
-            realized_gl_pct: realizedGlPct,
-            unrealized_gl: unrealizedGl,
-            unrealized_gl_pct: unrealizedGlPct,
-            unrealized_gl_with_fees: unrealizedGlWithFees,
-            unrealized_gl_with_fees_pct: unrealizedGlWithFeesPct,
-            total_gl: totalGl,
-            total_gl_pct: totalGlPct,
-            total_gl_with_fees: totalGlWithFees,
-            total_gl_with_fees_pct: totalGlWithFeesPct,
-        })
+        holdings.push(buildHolding(tickerId, txs, tickerDataMap.get(tickerId)))
     }
 
     return holdings

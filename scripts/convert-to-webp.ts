@@ -61,4 +61,4 @@ async function convertToWebp() {
     console.log('\n🎉 Done!')
 }
 
-await convertToWebp()
+convertToWebp()

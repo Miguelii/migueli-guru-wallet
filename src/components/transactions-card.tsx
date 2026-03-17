@@ -9,40 +9,20 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import type { Ticker, TickerData, Transaction } from '@/types/Transaction'
-import { TransactionType } from '@/types/Transaction'
 import { formatCurrency, formatDate, formatQuantity } from '@/lib/formaters'
 import { ArrowLeftRight } from 'lucide-react'
+import { TYPE_BADGE_VARIANT, TYPE_LABEL } from '@/lib/constants'
 
 type Props = {
     transactions: Transaction[]
     tickerData: TickerData[]
 }
 
-const TYPE_BADGE_VARIANT = {
-    [TransactionType.Buy]: 'default',
-    [TransactionType.Sell]: 'destructive',
-    [TransactionType.Reward]: 'secondary',
-    [TransactionType.Fee]: 'outline',
-} as const
-
-const TYPE_LABEL = {
-    [TransactionType.Buy]: 'Buy',
-    [TransactionType.Sell]: 'Sell',
-    [TransactionType.Reward]: 'Reward',
-    [TransactionType.Fee]: 'Fee',
-} as const
-
 export function TransactionsCard({ transactions, tickerData }: Props) {
     const currencyMap = new Map<Ticker, string>(tickerData.map((td) => [td.ticker, td.currency]))
 
-    const sorted = [...transactions].sort(
-        (a, b) =>
-            new Date(b.buy_date.replace(' ', 'T')).getTime() -
-            new Date(a.buy_date.replace(' ', 'T')).getTime()
-    )
-
     return (
-        <Card className="flex w-full flex-col h-92.5 shadow-sm">
+        <Card className="flex w-full lg:w-[60%]! flex-col h-92.5 shadow-sm">
             <CardHeader className="shrink-0 flex flex-row items-center gap-2">
                 <ArrowLeftRight className="h-5 w-5 text-muted-foreground" />
                 <CardTitle>Transactions</CardTitle>
@@ -61,7 +41,7 @@ export function TransactionsCard({ transactions, tickerData }: Props) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {sorted.map((tx) => {
+                        {transactions.map((tx) => {
                             const currency = currencyMap.get(tx.ticker_id) ?? 'EUR'
                             return (
                                 <TableRow
