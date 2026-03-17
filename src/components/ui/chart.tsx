@@ -5,7 +5,6 @@ import * as RechartsPrimitive from 'recharts'
 
 import { cn } from '@/lib/utils'
 
-// Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const
 
 export type ChartConfig = {
@@ -45,10 +44,16 @@ function ChartContainer({
     children: React.ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children']
 }) {
     const uniqueId = React.useId()
-    const chartId = `chart-${id || uniqueId.replace(/:/g, '')}`
+    const chartId = `chart-${id || uniqueId.replaceAll(/:/g, '')}`
+
+    const values = React.useMemo(() => {
+        return {
+            config,
+        }
+    }, [config])
 
     return (
-        <ChartContext.Provider value={{ config }}>
+        <ChartContext.Provider value={values}>
             <div
                 data-slot="chart"
                 data-chart={chartId}
@@ -132,7 +137,7 @@ function ChartTooltipContent({
         const itemConfig = getPayloadConfigFromPayload(config, item, key)
         const value =
             !labelKey && typeof label === 'string'
-                ? config[label as keyof typeof config]?.label || label
+                ? config[label]?.label || label
                 : itemConfig?.label
 
         if (labelFormatter) {
@@ -190,7 +195,7 @@ function ChartTooltipContent({
                                             !hideIndicator && (
                                                 <div
                                                     className={cn(
-                                                        'shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)',
+                                                        'shrink-0 rounded-xs border-(--color-border) bg-(--color-bg)',
                                                         {
                                                             'h-2.5 w-2.5': indicator === 'dot',
                                                             'w-1': indicator === 'line',
@@ -281,7 +286,7 @@ function ChartLegendContent({
                                 <itemConfig.icon />
                             ) : (
                                 <div
-                                    className="h-2 w-2 shrink-0 rounded-[2px]"
+                                    className="h-2 w-2 shrink-0 rounded-xs"
                                     style={{
                                         backgroundColor: item.color,
                                     }}
@@ -317,7 +322,7 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
         configLabelKey = payloadPayload[key as keyof typeof payloadPayload] as string
     }
 
-    return configLabelKey in config ? config[configLabelKey] : config[key as keyof typeof config]
+    return configLabelKey in config ? config[configLabelKey] : config[key]
 }
 
 export {
