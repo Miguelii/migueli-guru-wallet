@@ -36,7 +36,7 @@ export default function NotFound() {
                 </div>
 
                 {/* CTA */}
-                <Link href="/">
+                <Link href="/" prefetch={false}>
                     <Button size="lg" className="h-11 cursor-pointer px-6 text-sm font-semibold">
                         <ArrowLeft className="h-4 w-4" />
                         Back

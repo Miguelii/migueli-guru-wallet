@@ -12,18 +12,21 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { LayoutDashboardIcon, WalletIcon, type LucideProps } from 'lucide-react'
+import { LayoutDashboardIcon, type LucideProps } from 'lucide-react'
+import Image from 'next/image'
+import { getBuildId } from '@/lib/utils'
 
-type Icon = React.ForwardRefExoticComponent<
+type NavIcon = React.ForwardRefExoticComponent<
     Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
 >
 
-const data = {
-    user: {
-        name: 'shadcn',
-        email: 'm@example.com',
-        avatar: '/avatars/shadcn.jpg',
-    },
+type NavMain = {
+    title: string
+    url: string
+    Icon: NavIcon
+}
+
+const data: { navMain: NavMain[] } = {
     navMain: [
         {
             title: 'Dashboard',
@@ -33,6 +36,8 @@ const data = {
     ],
 }
 
+const buildId = getBuildId()
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="offcanvas" {...props}>
@@ -40,8 +45,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton className="data-[slot=sidebar-menu-button]:p-1.5! h-full">
-                            <div className="flex items-center gap-2 h-full w-full">
-                                <WalletIcon className="h-5 w-5 text-[#f8931a]" />
+                            <div className="flex items-center gap-2.5 h-full w-full">
+                                <Image
+                                    src={`/assets/logo.webp?v=${buildId}`}
+                                    width={32}
+                                    height={32}
+                                    className="object-cover"
+                                    alt="Migueli Guru Finances Logo"
+                                    unoptimized
+                                />
                                 <span className="text-base font-bold tracking-tight flex-wrap">
                                     Migueli Guru Finances
                                 </span>
@@ -57,15 +69,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     )
 }
 
-function NavMain({
-    items,
-}: {
-    items: {
-        title: string
-        url: string
-        Icon?: Icon
-    }[]
-}) {
+function NavMain({ items }: { items: NavMain[] }) {
     return (
         <SidebarGroup>
             <SidebarGroupContent className="flex flex-col gap-2">

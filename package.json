@@ -10,7 +10,8 @@
         "prettier": "npx prettier . --write",
         "typecheck": "npx tsc --noEmit",
         "check": "npm run lint && npm run typecheck",
-        "generate:private": "npx tsx scripts/generate-keys.ts"
+        "generate:private": "npx tsx scripts/generate-keys.ts",
+        "convert:webp": "npx tsx scripts/convert-to-webp.ts"
     },
     "dependencies": {
         "@base-ui/react": "^1.3.0",

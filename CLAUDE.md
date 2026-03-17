@@ -126,6 +126,18 @@ Transaction types: `BUY`, `SELL`, `REWARD`, `FEE`
 - Theme colors defined in `src/styles/globals.css` via `@theme inline` (OKLch)
 - Typography tokens in `src/styles/theme-typographic.css`
 - Chart colors: `chart-1` through `chart-5`
+- **Conditional classes**: Always use `cn()` with object syntax for conditional classes — never use template literals with ternaries in `className`
+  ```tsx
+  // ✅ Correct
+  className={cn('text-xs font-medium', {
+      'text-success': isPositive,
+      'text-destructive': isNegative,
+      'text-muted-foreground': isNeutral,
+  })}
+
+  // ❌ Wrong — never do this
+  className={`text-xs font-medium ${isPositive ? 'text-success' : 'text-destructive'}`}
+  ```
 
 ### Security
 - CSP headers set via `set-csp.ts` in middleware

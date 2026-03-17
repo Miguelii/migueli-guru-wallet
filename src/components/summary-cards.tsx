@@ -4,6 +4,7 @@ import { formatCurrency, formatPercentage, formatSignedCurrency } from '@/lib/fo
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Wallet, Bitcoin, BarChart3, TrendingUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type Props = {
     holdings: HoldingSummary[]
@@ -35,17 +36,19 @@ function PortfolioSummaryCard({ title, icon: Icon, holdings }: PortfolioSummaryC
     const currentValue = holdings.reduce((sum, h) => sum + h.current_value, 0)
     const glValue = currentValue - totalInvested
     const glPct = totalInvested !== 0 ? (glValue / totalInvested) * 100 : 0
-    const isPositive = glValue >= 0
+    const isNeutral = glValue == 0
+    const isPositive = glValue > 0
+    const isNegative = glValue < 0
 
     const currency = 'EUR'
 
     return (
-        <Card className="cursor-pointer hover:shadow-md hover:border-border/80 transition-all duration-200">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <Card className="cursor-pointer gap-0 py-0 hover:shadow-md hover:border-border/80 transition-all duration-200">
+            <CardHeader className="flex flex-row items-center justify-between rounded-t-xl border-b bg-muted/50 py-3!">
                 <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
                 <Icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-2 py-4">
                 <div>
                     <p className="text-2xl font-bold tabular-nums tracking-tight">
                         {formatCurrency(currentValue, currency)}
@@ -56,7 +59,11 @@ function PortfolioSummaryCard({ title, icon: Icon, holdings }: PortfolioSummaryC
                         Invested {formatCurrency(totalInvested, currency)}
                     </p>
                     <div
-                        className={`flex items-center gap-0.5 text-xs font-medium ${isPositive ? 'text-success' : 'text-destructive'}`}
+                        className={cn('flex items-center gap-0.5 text-xs font-medium', {
+                            'text-muted-foreground': isNeutral,
+                            'text-success': isPositive,
+                            'text-destructive': isNegative,
+                        })}
                     >
                         <span className="tabular-nums">
                             {formatSignedCurrency(glValue, currency)} · {formatPercentage(glPct)}
