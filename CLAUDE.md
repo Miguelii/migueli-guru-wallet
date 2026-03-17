@@ -13,6 +13,7 @@ Personal crypto and stock portfolio tracker. Replaces an Excel-based workflow wi
 - **Forms**: react-hook-form + zod validation
 - **Charts**: recharts (via shadcn chart wrapper)
 - **Notifications**: sonner
+- **Testing**: Vitest + @testing-library/react + jsdom
 - **React Compiler**: enabled for automatic optimization
 - **Package manager**: pnpm (never npm or yarn)
 
@@ -66,6 +67,9 @@ src/
     globals.css           # Global CSS with @theme inline tokens
     theme-typographic.css # Typography tokens
   proxy.ts                # Next.js middleware (CSP + Supabase auth proxy)
+scripts/
+  convert-to-webp.ts      # Converts all non-WebP images in public/assets to WebP
+  generate-keys.ts        # Generates private API keys
 ```
 
 ## Supabase Integration
@@ -82,7 +86,8 @@ src/
 5. Unauthenticated users accessing `/portfolio` are redirected to `/`
 
 ### Server Client
-- `createSbServerClient()` in `lib/utils.server.ts` creates a per-request Supabase client using `@supabase/ssr` with cookie-based session management
+- `createSbServerClient(hooks?)` in `lib/utils.server.ts` creates a per-request Supabase client using `@supabase/ssr` with cookie-based session management
+- Accepts optional `hooks` parameter with `onGetAll` and `onSetAll` callbacks that run **after** the default cookie handlers (used by `sbProxy` to sync cookies onto middleware request/response)
 - Always create a new client per request (required for Fluid compute)
 
 ### Data Fetching
@@ -150,6 +155,8 @@ Transaction types: `BUY`, `SELL`, `REWARD`, `FEE`
 - Always use the `@/*` path alias for imports — never use relative paths like `'./label'` or `'../utils'`
 - `server-only` import guard on all service files
 - `tryCatch` wrapper for async error handling
+- All exported functions must have JSDoc with `@param` tags
+- All images in `public/assets/` must be WebP format — run `pnpm convert:webp` to convert
 
 ## Code Quality Tools
 
@@ -158,8 +165,12 @@ Transaction types: `BUY`, `SELL`, `REWARD`, `FEE`
 pnpm lint         # ESLint
 pnpm prettier     # Prettier (format all files)
 pnpm typecheck    # TypeScript (tsc --noEmit)
-pnpm check        # lint + typecheck combined
+pnpm check        # lint + typecheck + tests combined
 pnpm knip         # Dead code / unused exports detection
+pnpm test         # Vitest (single run)
+pnpm test:watch   # Vitest (watch mode)
+pnpm test:coverage # Vitest with coverage
+pnpm convert:webp  # Convert all non-WebP images in public/assets to WebP
 ```
 
 ### ESLint
@@ -174,16 +185,25 @@ pnpm knip         # Dead code / unused exports detection
 - Strict mode enabled, `verbatimModuleSyntax`, `isolatedModules`
 - Target: ES2017, module resolution: bundler
 
+### Vitest
+- Config: `vitest.config.ts`
+- Environment: jsdom with `@vitejs/plugin-react`
+- Setup file: `src/__tests__/setup.ts`
+- Test location: `src/lib/__tests__/*.test.ts`
+- Globals enabled (`describe`, `it`, `expect` without imports)
+- Files with `server-only` import require mocking: `vi.mock('server-only', () => ({}))`
+
 ### Knip (dead code detection)
 - Config: `knip.json`
 - Extra entry points: `src/env/client.ts`, `src/env/load-system-envs.ts`
 - Ignores: `src/components/ui/**` (shadcn auto-generated), `husky`, `radix-ui`
+- Ignored binaries: `tsx`
 - Tags: `-lintignore` (skips `@lintignore` tagged exports)
 
 ### Husky (pre-commit hook)
 Runs on every commit:
 1. `prettier` — auto-format and stage changes
-2. `pnpm check` — lint + typecheck
+2. `pnpm check` — lint + typecheck + tests
 3. `pnpm knip` — dead code check
 
 ## Skills
@@ -194,6 +214,9 @@ Follow these skills for all development:
 - **vercel-react-best-practices**: 62 rules in `.agents/skills/vercel-react-best-practices/rules/`
 - **vercel-composition-patterns**: Composition rules in `.agents/skills/vercel-composition-patterns/rules/`
 - **web-design-guidelines**: Web design principles in `.agents/skills/web-design-guidelines/`
+
+### Data Ordering
+- Transactions are fetched sorted by `buy_date` ascending directly from Supabase (`.order('buy_date', { ascending: true })`) — no client-side sorting needed
 
 ## Future Plans
 
