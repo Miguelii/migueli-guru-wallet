@@ -28,7 +28,9 @@ export enum Ticker {
 export type TickerData = {
     ticker: Ticker
     curr_price: number
-    last_updated_at: `${number}-${number}-${number} ${number}:${number}:${number}`
+    last_updated_at:
+        | `${number}-${number}-${number} ${number}:${number}:${number}`
+        | `${number}-${number}-${number}T${number}:${number}:${number}`
     service: 'coinbase' | 'yahoo'
     currency: 'EUR' | 'USD' | 'CAD'
     symbol: '€' | '$'

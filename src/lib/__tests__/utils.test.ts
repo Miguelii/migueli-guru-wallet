@@ -79,7 +79,7 @@ describe('getLatestUpdate', () => {
 
     it('should return the timestamp of a single entry', () => {
         const data: TickerData[] = [
-            { ...baseTicker, ticker: Ticker.ETH, last_updated_at: '2026-03-17 10:00:00' },
+            { ...baseTicker, ticker: Ticker.ETH, last_updated_at: '2026-03-17T10:00:00' },
         ]
         expect(getLatestUpdate(data)).toBe('2026-03-17 10:00:00')
     })

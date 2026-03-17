@@ -14,7 +14,6 @@ import {
     formatSignedCurrency,
 } from '@/lib/formaters'
 import Image from 'next/image'
-import { LayoutList } from 'lucide-react'
 import type { HoldingSummary } from '@/types/Holding'
 import { cn, getBuildId } from '@/lib/utils'
 import { PUBLIC_ASSET_BUCKET_PATH } from '@/lib/utils.server'
@@ -29,8 +28,7 @@ export function HoldingsCard({ holdings }: Props) {
     return (
         <Card className="shadow-sm">
             <CardHeader className="flex flex-row items-center gap-2">
-                <LayoutList className="h-5 w-5 text-muted-foreground" />
-                <CardTitle>Holdings</CardTitle>
+                <CardTitle>Positions</CardTitle>
             </CardHeader>
             <CardContent className="overflow-x-auto">
                 <Table>
@@ -91,48 +89,54 @@ export function HoldingsCard({ holdings }: Props) {
                                 </TableCell>
                                 <TableCell
                                     className={cn('text-right tabular-nums', {
-                                        'text-success': h.realized_gl >= 0,
+                                        'text-success': h.realized_gl > 0,
                                         'text-destructive': h.realized_gl < 0,
+                                        'text-muted-foreground': h.realized_gl == 0,
                                     })}
                                 >
                                     {formatSignedCurrency(h.realized_gl, h.currency)}
                                 </TableCell>
                                 <TableCell
                                     className={cn('text-right tabular-nums', {
-                                        'text-success': h.realized_gl_pct >= 0,
+                                        'text-success': h.realized_gl_pct > 0,
                                         'text-destructive': h.realized_gl_pct < 0,
+                                        'text-muted-foreground': h.realized_gl_pct == 0,
                                     })}
                                 >
                                     {formatPercentage(h.realized_gl_pct)}
                                 </TableCell>
                                 <TableCell
                                     className={cn('text-right tabular-nums', {
-                                        'text-success': h.total_gl >= 0,
+                                        'text-success': h.total_gl > 0,
                                         'text-destructive': h.total_gl < 0,
+                                        'text-muted-foreground': h.total_gl == 0,
                                     })}
                                 >
                                     {formatSignedCurrency(h.total_gl, h.currency)}
                                 </TableCell>
                                 <TableCell
                                     className={cn('text-right tabular-nums', {
-                                        'text-success': h.total_gl_pct >= 0,
+                                        'text-success': h.total_gl_pct > 0,
                                         'text-destructive': h.total_gl_pct < 0,
+                                        'text-muted-foreground': h.total_gl_pct == 0,
                                     })}
                                 >
                                     {formatPercentage(h.total_gl_pct)}
                                 </TableCell>
                                 <TableCell
                                     className={cn('text-right tabular-nums', {
-                                        'text-success': h.total_gl_with_fees >= 0,
+                                        'text-success': h.total_gl_with_fees > 0,
                                         'text-destructive': h.total_gl_with_fees < 0,
+                                        'text-muted-foreground': h.total_gl_with_fees == 0,
                                     })}
                                 >
                                     {formatSignedCurrency(h.total_gl_with_fees, h.currency)}
                                 </TableCell>
                                 <TableCell
                                     className={cn('text-right tabular-nums', {
-                                        'text-success': h.total_gl_with_fees_pct >= 0,
+                                        'text-success': h.total_gl_with_fees_pct > 0,
                                         'text-destructive': h.total_gl_with_fees_pct < 0,
+                                        'text-muted-foreground': h.total_gl_with_fees_pct == 0,
                                     })}
                                 >
                                     {formatPercentage(h.total_gl_with_fees_pct)}

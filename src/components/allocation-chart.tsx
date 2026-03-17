@@ -117,7 +117,7 @@ export function AllocationChart({ holdings }: Props) {
                                             y={(viewBox.cy ?? 0) - 8}
                                             className="fill-muted-foreground text-xs"
                                         >
-                                            Total
+                                            Total Net Worth
                                         </tspan>
                                         <tspan
                                             x={viewBox.cx}

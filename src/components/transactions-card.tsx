@@ -10,7 +10,6 @@ import {
 import { Badge } from '@/components/ui/badge'
 import type { Ticker, TickerData, Transaction } from '@/types/Transaction'
 import { formatCurrency, formatDate, formatQuantity } from '@/lib/formaters'
-import { ArrowLeftRight } from 'lucide-react'
 import { TYPE_BADGE_VARIANT, TYPE_LABEL } from '@/lib/constants'
 
 type Props = {
@@ -24,7 +23,6 @@ export function TransactionsCard({ transactions, tickerData }: Props) {
     return (
         <Card className="flex w-full lg:w-[60%]! flex-col h-92.5 shadow-sm">
             <CardHeader className="shrink-0 flex flex-row items-center gap-2">
-                <ArrowLeftRight className="h-5 w-5 text-muted-foreground" />
                 <CardTitle>Transactions</CardTitle>
             </CardHeader>
             <CardContent className="min-h-0 flex-1 overflow-y-auto">

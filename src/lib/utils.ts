@@ -28,5 +28,7 @@ export const getBuildId = () => {
 export function getLatestUpdate(data: TickerData[]): string {
     if (data.length === 0) return '—'
     const latest = data.reduce((a, b) => (a.last_updated_at > b.last_updated_at ? a : b), data[0])
-    return latest.last_updated_at
+    const split = latest.last_updated_at.split('T')
+    if (split?.length === 1) return split.at(0)!
+    return `${split.at(0)} ${split.at(1)}`
 }

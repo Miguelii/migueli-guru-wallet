@@ -22,8 +22,8 @@ export const GET_CRYPTO_ASSETS_CACHE_KEY = 'getCryptoAssets'
 export const GET_CRYPTO_ASSETS_REVALIDATE_TIME = 14400 // 4h
 
 export const TYPE_BADGE_VARIANT = {
-    [TransactionType.Buy]: 'default',
-    [TransactionType.Sell]: 'destructive',
+    [TransactionType.Buy]: 'success',
+    [TransactionType.Sell]: 'alert',
     [TransactionType.Reward]: 'secondary',
     [TransactionType.Fee]: 'outline',
 } as const

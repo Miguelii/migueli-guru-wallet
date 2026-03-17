@@ -16,7 +16,7 @@ export function SummaryCards({ holdings }: Props) {
 
     return (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            <PortfolioSummaryCard title="Portfolio" icon={Wallet} holdings={holdings} />
+            <PortfolioSummaryCard title="Total Net Worth" icon={Wallet} holdings={holdings} />
             <PortfolioSummaryCard title="Crypto" icon={Bitcoin} holdings={cryptoHoldings} />
             <PortfolioSummaryCard title="ETFs" icon={BarChart3} holdings={etfHoldings} />
             <PortfolioSummaryCard title="Stocks" icon={TrendingUp} holdings={stockHoldings} />
