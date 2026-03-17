@@ -1,6 +1,6 @@
 import type { NextResponse } from 'next/server'
 import { NEXT_IMAGE_PATH } from '@/lib/constants'
-import { isPathFromStaticFiles } from './utils.server'
+import { isPathFromStaticFiles } from '@/lib/utils.server'
 
 export const setCSP = (response: NextResponse, pathname: string) => {
     const csp = generateCSP()
@@ -33,7 +33,6 @@ export const setCSP = (response: NextResponse, pathname: string) => {
 }
 
 const generateCSP = () => {
-    //const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
     const csp = `
         default-src 'self';
         style-src 'self' 

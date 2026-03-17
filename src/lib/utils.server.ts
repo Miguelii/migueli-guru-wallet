@@ -1,9 +1,11 @@
 import 'server-only'
+
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { ServerEnv } from '@/env/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { PRIVATE_ROUTE_PAGE, STATIC_PREFIXES } from './constants'
+import { PRIVATE_ROUTE_PAGE, STATIC_PREFIXES } from '@/lib/constants'
+import { timingSafeEqual } from 'node:crypto'
 
 export const isPathFromStaticFiles = (pathname: string): boolean => {
     return STATIC_PREFIXES.some((prefix) => pathname.startsWith(prefix))
@@ -92,4 +94,10 @@ export async function sbProxy(request: NextRequest) {
     // If this is not done, you may be causing the browser and server to go out
     // of sync and terminate the user's session prematurely!
     return supabaseResponse
+}
+
+export function verifyApiKey(apiKey: string, expected: string): boolean {
+    if (apiKey.length !== expected.length) return false
+
+    return timingSafeEqual(Buffer.from(apiKey), Buffer.from(expected))
 }

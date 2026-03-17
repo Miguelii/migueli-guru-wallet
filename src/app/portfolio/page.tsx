@@ -6,19 +6,20 @@ import { CurrentPricesBadges } from '@/components/current-prices-badges'
 import { SummaryCards } from '@/components/summary-cards'
 import { AllocationCardWithChart } from '@/components/allocation-card-with-chart'
 import { HoldingsCard } from '@/components/holdings-card'
+import type { Metadata } from 'next'
 
-export default async function DashboardPage() {
+export const metadata: Metadata = {
+    title: 'Portfolio | Migueli Guru Finances',
+}
+
+export default async function PortfolioPage() {
     const [transactions, data] = await Promise.all([getCryptoAssets(), getData()])
 
     const holdings = aggregateHoldings(transactions, data)
 
     return (
-        <main className="p-4 md:p-6 max-w-screen-2xl mx-auto w-full flex flex-col gap-6 mb-24">
+        <main className="flex flex-col gap-6 mb-24">
             <CurrentPricesBadges data={data} />
-
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
-            </div>
 
             <SummaryCards holdings={holdings} />
 

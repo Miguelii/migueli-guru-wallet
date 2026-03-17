@@ -28,7 +28,7 @@ export type TickerData = {
     ticker: Ticker
     curr_price: number
     last_updated_at: `${number}-${number}-${number} ${number}:${number}:${number}`
-    service: string
+    service: 'coinbase' | 'yahoo'
     currency: 'EUR' | 'USD' | 'CAD'
     symbol: '€' | '$'
     logo: `/assets/${string}`

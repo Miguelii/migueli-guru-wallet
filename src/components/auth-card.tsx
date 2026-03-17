@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Lock, Eye, EyeOff, Loader2Icon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { Field, FieldError, FieldLabel } from './ui/field'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { sbLoginAction } from '@/services/sb-login-action'
 import { toast } from 'sonner'
 

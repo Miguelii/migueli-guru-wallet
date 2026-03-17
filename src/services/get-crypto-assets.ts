@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { type Transaction } from '@/types/Transaction'
-import { GET_DATA_CACHE_KEY } from '@/lib/constants'
+import { GET_CRYPTO_ASSETS_CACHE_KEY, GET_CRYPTO_ASSETS_REVALIDATE_TIME } from '@/lib/constants'
 import { tryCatch } from '@/lib/try-catch'
 import { createSbServerClient } from '@/lib/utils.server'
 import { SbTables } from '@/types/SbTables'
@@ -16,10 +16,10 @@ const getCryptoAssetsFn = (supabase: Awaited<ReturnType<typeof createSbServerCli
 
             return data as Transaction[]
         },
-        [GET_DATA_CACHE_KEY],
+        [GET_CRYPTO_ASSETS_CACHE_KEY],
         {
-            revalidate: 60,
-            tags: [GET_DATA_CACHE_KEY],
+            revalidate: GET_CRYPTO_ASSETS_REVALIDATE_TIME,
+            tags: [GET_CRYPTO_ASSETS_CACHE_KEY],
         }
     )
 

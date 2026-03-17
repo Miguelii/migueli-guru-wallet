@@ -45,7 +45,7 @@ export function TransactionsCard({ transactions, tickerData }: Props) {
         <Card className="flex w-full flex-col h-92.5 shadow-sm">
             <CardHeader className="shrink-0 flex flex-row items-center gap-2">
                 <ArrowLeftRight className="h-5 w-5 text-muted-foreground" />
-                <CardTitle>My Transactions</CardTitle>
+                <CardTitle>Transactions</CardTitle>
             </CardHeader>
             <CardContent className="min-h-0 flex-1 overflow-y-auto">
                 <Table>

@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { GET_DATA_CACHE_KEY } from '@/lib/constants'
+import { GET_DATA_CACHE_KEY, GET_DATA_REVALIDATE_TIME } from '@/lib/constants'
 import { tryCatch } from '@/lib/try-catch'
 import { createSbServerClient } from '@/lib/utils.server'
 import { SbTables } from '@/types/SbTables'
@@ -10,7 +10,7 @@ import { unstable_cache } from 'next/cache'
 const getDataFn = (supabase: Awaited<ReturnType<typeof createSbServerClient>>) =>
     unstable_cache(
         async () => {
-            const { data, error } = await supabase.from(SbTables.DATA).select('*')
+            const { data, error } = await supabase.from(SbTables.DATA).select('*').order('ticker')
 
             if (error) throw error
 
@@ -18,7 +18,7 @@ const getDataFn = (supabase: Awaited<ReturnType<typeof createSbServerClient>>) =
         },
         [GET_DATA_CACHE_KEY],
         {
-            revalidate: 60,
+            revalidate: GET_DATA_REVALIDATE_TIME,
             tags: [GET_DATA_CACHE_KEY],
         }
     )

@@ -16,10 +16,13 @@ import {
 import Image from 'next/image'
 import { LayoutList } from 'lucide-react'
 import type { HoldingSummary } from '@/types/Holding'
+import { getBuildId } from '@/lib/utils'
 
 type Props = {
     holdings: HoldingSummary[]
 }
+
+const buildId = getBuildId()
 
 export function HoldingsCard({ holdings }: Props) {
     return (
@@ -55,7 +58,7 @@ export function HoldingsCard({ holdings }: Props) {
                                 <TableCell className="font-medium">
                                     <div className="flex items-center gap-2">
                                         <Image
-                                            src={h.tickerLogo}
+                                            src={`${h.tickerLogo}?v=${buildId}`}
                                             alt={h.symbol}
                                             width={24}
                                             height={24}

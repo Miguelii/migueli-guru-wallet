@@ -1,7 +1,7 @@
 import type { HoldingSummary } from '@/types/Holding'
 import { CryptoTickerSet, ETFTickerSet, StockTickerSet } from '@/lib/constants'
 import { formatCurrency, formatPercentage, formatSignedCurrency } from '@/lib/formaters'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Wallet, Bitcoin, BarChart3, TrendingUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 

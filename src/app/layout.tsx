@@ -1,7 +1,8 @@
 import '@/styles/globals.css'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 const geistSans = Geist({
     variable: '--font-sans',
@@ -16,6 +17,13 @@ export const metadata: Metadata = {
     description: 'Private app for tracking Crypto, ETF, and Stock investments',
 }
 
+export const viewport: Viewport = {
+    colorScheme: 'light',
+    width: 'device-width',
+    initialScale: 1,
+    height: 'device-height',
+}
+
 type Props = LayoutProps<'/'>
 
 export default function RootLayout({ children }: Props) {
@@ -24,7 +32,9 @@ export default function RootLayout({ children }: Props) {
             <body
                 className={`${geistSans.variable} font-sans antialiased bg-background text-primary`}
             >
-                <div className="flex-1">{children}</div>
+                <TooltipProvider>
+                    <div className="flex-1">{children}</div>
+                </TooltipProvider>
                 <Toaster />
             </body>
         </html>

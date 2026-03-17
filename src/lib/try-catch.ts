@@ -1,4 +1,4 @@
-import { Logger } from './logger'
+import { Logger } from '@/lib/logger'
 
 type Result<T, E = Error> = {
     data: T | null

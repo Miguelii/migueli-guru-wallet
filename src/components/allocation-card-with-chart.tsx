@@ -1,6 +1,6 @@
 import type { HoldingSummary } from '@/types/Holding'
-import { AllocationChart } from './allocation-chart'
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card'
+import { AllocationChart } from '@/components/allocation-chart'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { PieChart } from 'lucide-react'
 
 type Props = {

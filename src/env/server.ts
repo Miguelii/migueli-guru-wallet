@@ -7,6 +7,8 @@ export const ServerEnv = createEnv({
         NEXT_SUPABASE_URL: z.string(),
         NEXT_SUPABASE_PUBLISHABLE_KEY: z.string(),
         NEXT_SUPABASE_ANON_KEY: z.string(),
+        NEXT_COINBASE_SECRET_KEY: z.string(),
+        NEXT_UPDATE_TICKERS_SECRET_KEY: z.string(),
     },
     runtimeEnv: {
         // NODE_ENV is automatically set by Node.js runtime
@@ -15,5 +17,7 @@ export const ServerEnv = createEnv({
         NEXT_SUPABASE_URL: process.env.NEXT_SUPABASE_URL,
         NEXT_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_SUPABASE_PUBLISHABLE_KEY,
         NEXT_SUPABASE_ANON_KEY: process.env.NEXT_SUPABASE_ANON_KEY,
+        NEXT_COINBASE_SECRET_KEY: process.env.NEXT_COINBASE_SECRET_KEY,
+        NEXT_UPDATE_TICKERS_SECRET_KEY: process.env.NEXT_UPDATE_TICKERS_SECRET_KEY,
     },
 })

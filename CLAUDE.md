@@ -135,8 +135,44 @@ Transaction types: `BUY`, `SELL`, `REWARD`, `FEE`
 ### Code Quality
 - No barrel exports (index.ts re-exports)
 - Import directly from the specific file
+- Always use the `@/*` path alias for imports — never use relative paths like `'./label'` or `'../utils'`
 - `server-only` import guard on all service files
 - `tryCatch` wrapper for async error handling
+
+## Code Quality Tools
+
+### Scripts
+```
+pnpm lint         # ESLint
+pnpm prettier     # Prettier (format all files)
+pnpm typecheck    # TypeScript (tsc --noEmit)
+pnpm check        # lint + typecheck combined
+pnpm knip         # Dead code / unused exports detection
+```
+
+### ESLint
+- Config: `eslint.config.mjs` (flat config)
+- Extends: `eslint-config-next/core-web-vitals` + `eslint-config-next/typescript`
+
+### Prettier
+- Config: `.prettierrc` — 4 spaces, no semicolons, single quotes, 100 char width, ES5 trailing commas
+- Ignores: `build`, `coverage`, `CLAUDE.md`, `.agents`, `.claude`, `design-system`
+
+### TypeScript
+- Strict mode enabled, `verbatimModuleSyntax`, `isolatedModules`
+- Target: ES2017, module resolution: bundler
+
+### Knip (dead code detection)
+- Config: `knip.json`
+- Extra entry points: `src/env/client.ts`, `src/env/load-system-envs.ts`
+- Ignores: `src/components/ui/**` (shadcn auto-generated), `husky`, `radix-ui`
+- Tags: `-lintignore` (skips `@lintignore` tagged exports)
+
+### Husky (pre-commit hook)
+Runs on every commit:
+1. `prettier` — auto-format and stage changes
+2. `pnpm check` — lint + typecheck
+3. `pnpm knip` — dead code check
 
 ## Skills
 
