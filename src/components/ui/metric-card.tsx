@@ -3,6 +3,7 @@ import type { PropsWithChildren } from 'react'
 import Image from 'next/image'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { getBuildId } from '@/lib/utils'
+import { Skeleton } from './skeleton'
 
 type IconProps = { icon: LucideIcon; imgSrc?: never }
 type ImgProps = { icon?: never; imgSrc: { src: string; alt: string } }
@@ -48,6 +49,24 @@ export function MetricCard({ title, icon: Icon, imgSrc, children, titleColor }: 
                 )}
             </CardHeader>
             <CardContent className="space-y-2 py-4">{children}</CardContent>
+        </Card>
+    )
+}
+
+export function MetricCardSkeleton() {
+    return (
+        <Card className="gap-0 py-0">
+            <CardHeader className="flex flex-row items-center justify-between rounded-t-xl border-b bg-muted/50 py-3!">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-4 rounded-full" />
+            </CardHeader>
+            <CardContent className="space-y-2 py-4">
+                <Skeleton className="h-8 w-32" />
+                <div className="flex items-center justify-between">
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-3 w-20" />
+                </div>
+            </CardContent>
         </Card>
     )
 }

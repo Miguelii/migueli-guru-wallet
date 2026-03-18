@@ -1,5 +1,5 @@
 import type { TickerData } from '@/types/Transaction'
-import { MetricCard } from './metric-card'
+import { MetricCard } from './ui/metric-card'
 import { formatCurrency } from '@/lib/formaters'
 import { PUBLIC_ASSET_BUCKET_PATH } from '@/lib/constants.server'
 

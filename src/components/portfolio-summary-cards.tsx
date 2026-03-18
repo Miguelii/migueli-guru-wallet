@@ -3,7 +3,7 @@ import { formatCurrency, formatPercentage, formatSignedCurrency } from '@/lib/fo
 import { Wallet, Bitcoin, BarChart3, TrendingUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { MetricCard } from './metric-card'
+import { MetricCard } from './ui/metric-card'
 
 type Props = {
     holdings: HoldingSummary[]
