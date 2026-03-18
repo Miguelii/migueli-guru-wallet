@@ -13,6 +13,7 @@ Personal crypto and stock portfolio tracker. Replaces an Excel-based workflow wi
 - **Forms**: react-hook-form + zod validation
 - **Charts**: recharts (via shadcn chart wrapper)
 - **Notifications**: sonner
+- **Error Handling**: Effect (`effect`) for typed, composable error handling with retry logic
 - **Testing**: Vitest + @testing-library/react + jsdom
 - **Bot Protection**: Vercel BotId (`botid`)
 - **React Compiler**: enabled for automatic optimization
@@ -50,6 +51,7 @@ src/
     get-crypto-assets.ts  # Fetch transactions from Supabase (cached)
     get-data.ts           # Fetch ticker/price data from Supabase (cached)
     sb-login-action.ts    # Server action for authentication
+    sign-out-action.ts        # Server action for sign out
     update-tickers-prices.ts  # Fetch & update current prices (Coinbase + Yahoo Finance)
   lib/
     calculations.ts       # Pure calculation functions (DCA, P&L, holdings aggregation)
@@ -58,7 +60,6 @@ src/
     utils.ts              # Client utilities (cn, etc.)
     utils.server.ts       # Supabase server client, proxy, static path check
     set-csp.ts            # Content Security Policy headers
-    try-catch.ts          # Async error handling wrapper
     logger.ts             # Logging utility
   types/
     Transaction.ts        # Transaction, Ticker, TickerData types
@@ -107,7 +108,7 @@ scripts/
 ### Data Fetching
 - Services use `server-only` import guard
 - `unstable_cache` from Next.js with 4h revalidation and tagged cache keys
-- `tryCatch` wrapper for consistent error handling — returns `{ data, error }`
+- Effect for error handling — all services use `Effect.gen` + `Effect.tryPromise` with `Effect.catchAll` for recovery
 - Data flows as props from Server Components (no client-side state management)
 
 ### Environment Variables
@@ -180,9 +181,19 @@ Transaction types: `BUY`, `SELL`, `REWARD`, `FEE`
 - Import directly from the specific file
 - Always use the `@/*` path alias for imports — never use relative paths like `'./label'` or `'../utils'`
 - `server-only` import guard on all service files
-- `tryCatch` wrapper for async error handling
 - All exported functions must have JSDoc with `@param` tags
 - All images in `public/assets/` must be WebP format — run `pnpm convert:webp` to convert
+
+### Effect (Error Handling & Retry)
+- All services use `Effect.gen` generators instead of `try/catch` or custom `tryCatch` wrappers
+- `Effect.tryPromise` wraps any promise that can fail (Supabase queries, external API calls)
+- `Effect.promise` wraps promises that are not expected to fail (e.g., `supabase.auth.getClaims()`)
+- `Effect.catchAll` at the pipeline end for logging + safe fallback (return `[]`, `void`, or error status)
+- `Effect.fail` for explicit typed failures within the pipeline (e.g., validation errors in `sbLoginAction`)
+- `Effect.runPromise` converts the Effect pipeline back to a `Promise` at the service boundary
+- **Retry logic**: `update-tickers-prices.ts` uses `Schedule.exponential('2 second')` with `Schedule.recurs(2)` for exponential backoff on external API calls (Coinbase, Yahoo Finance) — delays: 2s → 4s, max 2 retries
+- **Concurrency**: `Effect.forEach` with `{ concurrency: 'unbounded' }` for parallel ticker updates
+- **Pattern**: always `Effect.gen(function* () { ... }).pipe(Effect.catchAll(...))` — generators for composition, pipe for error recovery
 
 ## Code Quality Tools
 

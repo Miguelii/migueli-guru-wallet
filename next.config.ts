@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
             'tailwind-merge',
             'tw-animate-css',
             'zod',
+            'effect',
         ],
     },
     reactCompiler: true,

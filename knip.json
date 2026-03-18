@@ -3,6 +3,6 @@
     "tags": ["-lintignore"],
     "entry": ["src/env/load-system-envs.ts", "src/sitemap.ts"],
     "ignoreBinaries": ["tsx"],
-    "ignoreDependencies": ["husky", "radix-ui"],
+    "ignoreDependencies": ["husky"],
     "ignore": ["src/components/ui/**"]
 }

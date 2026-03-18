@@ -4,7 +4,6 @@ import {
     GET_DATA_CACHE_KEY,
     PRIVATE_ROUTE_PATH,
 } from '@/lib/constants'
-import { tryCatch } from '@/lib/try-catch'
 import { updateTickersPrices } from '@/services/update-tickers-prices'
 import { createSbServerClient, verifyApiKey } from '@/lib/utils.server'
 import { revalidatePath, revalidateTag } from 'next/cache'
@@ -34,16 +33,15 @@ export async function POST(request: NextRequest) {
     }
 
     const { isBot } = await checkBotId()
+
     if (isBot) {
         return NextResponse.json({ error: 'Not Acceptable' }, { status: 406 })
     }
 
-    const { data, error } = await tryCatch(async () => {
-        return await updateTickersPrices()
-    }, 'getCoinbasePriceAPI')
+    const result = await updateTickersPrices()
 
-    if (error || data?.success === false) {
-        return NextResponse.json({ status: 400 })
+    if (!result.success) {
+        return NextResponse.json({ status: result.status })
     }
 
     revalidateTag(GET_DATA_CACHE_KEY, 'max')

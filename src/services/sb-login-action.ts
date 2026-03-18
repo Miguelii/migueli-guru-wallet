@@ -1,9 +1,10 @@
 'use server'
 
-import { tryCatch } from '@/lib/try-catch'
+import { Logger } from '@/lib/logger'
 import { createSbServerClient } from '@/lib/utils.server'
 import { z } from 'zod'
 import { checkBotId } from 'botid/server'
+import { Effect } from 'effect'
 
 const loginSchema = z.object({
     email: z.email(),
@@ -17,41 +18,57 @@ type Return = {
     error?: string
 }
 
+/**
+ * Server action that authenticates a user with email and password via Supabase Auth.
+ * Validates input with zod, checks bot protection, and signs in with Supabase.
+ * @param props - The login credentials (email and password)
+ * @returns A promise resolving to `{ status, error? }` — `200` on success, `400` on failure
+ */
 export async function sbLoginAction(props: Props): Promise<Return> {
-    const { data } = await tryCatch(async () => {
+    const program = Effect.gen(function* () {
         const result = loginSchema.safeParse(props)
 
         if (!result.success) {
-            throw new Error('Invalid Request')
+            return yield* Effect.fail(new Error('Invalid Request'))
         }
 
-        const { isBot } = await checkBotId()
-        if (isBot) throw new Error('BOT DETECTED!')
+        const { isBot } = yield* Effect.tryPromise({
+            try: () => checkBotId(),
+            catch: (e) => new Error(`Bot check failed: ${String(e)}`),
+        })
 
-        const supabase = await createSbServerClient()
+        if (isBot) {
+            return yield* Effect.fail(new Error('Not Acceptable'))
+        }
 
-        const { error } = await supabase.auth.signInWithPassword({
-            email: result.data.email,
-            password: result.data.password,
+        const supabase = yield* Effect.tryPromise({
+            try: () => createSbServerClient(),
+            catch: (e) => new Error(`Failed to create Supabase client: ${String(e)}`),
+        })
+
+        const { error } = yield* Effect.tryPromise({
+            try: () =>
+                supabase.auth.signInWithPassword({
+                    email: result.data.email,
+                    password: result.data.password,
+                }),
+            catch: (e) => new Error(`signInWithPassword failed: ${String(e)}`),
         })
 
         if (error) {
-            throw new Error(JSON.stringify(error))
+            return yield* Effect.fail(new Error(JSON.stringify(error)))
         }
 
-        return {
-            success: true,
-        }
-    }, 'sbLoginAction')
+        return { status: 200 } satisfies Return
+    }).pipe(
+        Effect.catchAll((error) => {
+            Logger.error('[Effect] sbLoginAction failed', error)
+            return Effect.succeed({
+                status: 400,
+                error: 'Bad Credentials',
+            } satisfies Return)
+        })
+    )
 
-    if (data?.success === true) {
-        return {
-            status: 200,
-        }
-    }
-
-    return {
-        status: 400,
-        error: 'Bad Credentials',
-    }
+    return Effect.runPromise(program)
 }
