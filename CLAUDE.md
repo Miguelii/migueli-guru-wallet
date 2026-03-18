@@ -189,11 +189,16 @@ Transaction types: `BUY`, `SELL`, `REWARD`, `FEE`
 - `Effect.tryPromise` wraps any promise that can fail (Supabase queries, external API calls)
 - `Effect.promise` wraps promises that are not expected to fail (e.g., `supabase.auth.getClaims()`)
 - `Effect.catchAll` at the pipeline end for logging + safe fallback (return `[]`, `void`, or error status)
-- `Effect.fail` for explicit typed failures within the pipeline (e.g., validation errors in `sbLoginAction`)
+- `Effect.fail` for explicit typed failures within the pipeline (e.g., validation errors in `sbLoginAction`) — **never use `throw` inside `Effect.gen`** (creates defects that bypass `catchAll`)
 - `Effect.runPromise` converts the Effect pipeline back to a `Promise` at the service boundary
-- **Retry logic**: `update-tickers-prices.ts` uses `Schedule.exponential('2 second')` with `Schedule.recurs(2)` for exponential backoff on external API calls (Coinbase, Yahoo Finance) — delays: 2s → 4s, max 2 retries
+- **Retry logic**: `update-tickers-prices.ts` uses `Schedule.exponential('2 second')` with `Schedule.jittered` and `Schedule.intersect(Schedule.recurs(2))` for exponential backoff with jitter on external API calls (Coinbase, Yahoo Finance) — approximate delays: ~2s → ~4s, max 2 retries
 - **Concurrency**: `Effect.forEach` with `{ concurrency: 'unbounded' }` for parallel ticker updates
 - **Pattern**: always `Effect.gen(function* () { ... }).pipe(Effect.catchAll(...))` — generators for composition, pipe for error recovery
+- **Schedule combinators**: use `Schedule.intersect` (not `Schedule.compose`) to combine exponential backoff with retry limits; always add `Schedule.jittered` to prevent thundering herd
+
+#### Effect Documentation
+- **LLM-optimized docs**: `https://effect.website/llms-full.txt` — fetch via `WebFetch` when writing or reviewing Effect code
+- **Skill**: `.claude/skills/effect-ts/SKILL.md` — project-specific patterns and rules
 
 ## Code Quality Tools
 
@@ -251,6 +256,7 @@ Follow these skills for all development:
 - **vercel-react-best-practices**: 62 rules in `.agents/skills/vercel-react-best-practices/rules/`
 - **vercel-composition-patterns**: Composition rules in `.agents/skills/vercel-composition-patterns/rules/`
 - **web-design-guidelines**: Web design principles in `.agents/skills/web-design-guidelines/`
+- **effect-ts**: Effect patterns and rules in `.claude/skills/effect-ts/SKILL.md` — fetch `https://effect.website/llms-full.txt` for full docs
 
 ### Data Ordering
 - Transactions are fetched sorted by `buy_date` ascending directly from Supabase (`.order('buy_date', { ascending: true })`) — no client-side sorting needed

@@ -16,10 +16,14 @@ type Return = {
 }
 
 /**
- * Retry policy with exponential backoff starting at 2 seconds, limited to 2 retries.
- * Retry delays: 2s → 4s (total max wait: 6s before giving up).
+ * Retry policy with exponential backoff starting at 2 seconds, jittered (80%-120%),
+ * limited to 2 retries. Approximate delays: ~2s → ~4s (total max wait: ~6s before giving up).
+ * Jitter prevents thundering herd when multiple tickers retry concurrently.
  */
-const retryPolicy = Schedule.exponential('2 second').pipe(Schedule.compose(Schedule.recurs(2)))
+const retryPolicy = Schedule.exponential('2 second').pipe(
+    Schedule.jittered,
+    Schedule.intersect(Schedule.recurs(2))
+)
 
 /** Map of service names to their respective price fetcher functions. */
 const priceFetchers: Record<

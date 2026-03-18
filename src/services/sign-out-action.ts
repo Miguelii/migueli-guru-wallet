@@ -22,7 +22,7 @@ export async function signOutAction() {
             catch: (e) => new Error(`signOut failed: ${String(e)}`),
         })
 
-        if (error) throw error
+        if (error) return yield* Effect.fail(error)
 
         revalidatePath(HOME_PAGE_PATH, 'layout')
     }).pipe(
