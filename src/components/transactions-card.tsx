@@ -1,7 +1,3 @@
-'use client'
-
-import { useCallback, useRef, useState } from 'react'
-import { useVirtualizer } from '@tanstack/react-virtual'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
     Table,
@@ -21,37 +17,25 @@ import {
 } from '@/types/Transaction'
 import { formatCurrency, formatDate, formatQuantity } from '@/lib/formaters'
 import { TYPE_BADGE_VARIANT, TYPE_LABEL } from '@/lib/constants'
+import { cn } from '@/lib/utils'
 
 type Props = {
-    /** List of transactions to display */
     transactions: Transaction[]
-    /** Ticker metadata for currency lookup */
     tickerData: TickerData[]
+    hidePrices: boolean
 }
 
-/**
- * Virtualized transaction table using @tanstack/react-virtual.
- * @param props - Transactions and ticker data
- */
-export function TransactionsCard({ transactions, tickerData }: Props) {
+export function TransactionsCard({ transactions, tickerData, hidePrices }: Props) {
     const currencyMap = new Map<Ticker, string>(tickerData.map((td) => [td.ticker, td.currency]))
-    const parentRef = useRef<HTMLDivElement>(null)
-
-    const virtualizer = useVirtualizer({
-        count: transactions.length,
-        getScrollElement: () => parentRef.current,
-        estimateSize: () => 40,
-        overscan: 5,
-    })
 
     return (
         <Card className="flex w-full lg:w-[60%]! flex-col h-92.5 shadow-sm">
             <CardHeader className="shrink-0 flex flex-row items-center gap-2">
                 <CardTitle>Transactions</CardTitle>
             </CardHeader>
-            <CardContent ref={parentRef} className="min-h-0 flex-1 overflow-y-auto">
+            <CardContent className="min-h-0 flex-1 overflow-y-auto">
                 <Table>
-                    <TableHeader className="sticky top-0 z-10 bg-card">
+                    <TableHeader>
                         <TableRow>
                             <TableHead>Date</TableHead>
                             <TableHead>Asset</TableHead>
@@ -62,51 +46,58 @@ export function TransactionsCard({ transactions, tickerData }: Props) {
                             <TableHead className="text-right">Fee</TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody
-                        style={{
-                            height: `${virtualizer.getTotalSize()}px`,
-                            position: 'relative',
-                        }}
-                    >
-                        {virtualizer.getVirtualItems().map((virtualRow) => {
-                            const tx = transactions[virtualRow.index]
+                    <TableBody>
+                        {transactions.map((tx) => {
                             const currency = currencyMap.get(tx.ticker_id) ?? Currency.EUR
                             return (
                                 <TableRow
                                     key={tx.id}
-                                    className="cursor-pointer hover:bg-muted/50 transition-colors absolute w-full flex"
-                                    style={{
-                                        height: `${virtualRow.size}px`,
-                                        transform: `translateY(${virtualRow.start}px)`,
-                                    }}
+                                    className="cursor-pointer hover:bg-muted/50 transition-colors"
                                 >
-                                    <TableCell className="text-muted-foreground flex-1">
+                                    <TableCell className="text-muted-foreground">
                                         {formatDate(tx.buy_date)}
                                     </TableCell>
-                                    <TableCell className="font-medium flex-1">
-                                        {tx.ticker_id}
-                                    </TableCell>
-                                    <TableCell className="flex-1">
+                                    <TableCell className="font-medium">{tx.ticker_id}</TableCell>
+                                    <TableCell>
                                         <Badge variant={TYPE_BADGE_VARIANT[tx.type]}>
                                             {TYPE_LABEL[tx.type]}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="text-right tabular-nums flex-1">
+                                    <TableCell
+                                        className={cn('text-right tabular-nums', {
+                                            'blur-md select-none': hidePrices,
+                                        })}
+                                    >
                                         {tx.quantity != null && tx.type !== TransactionType.Fee
                                             ? formatQuantity(tx.quantity)
                                             : '—'}
                                     </TableCell>
-                                    <TableCell className="text-right tabular-nums flex-1">
+                                    <TableCell
+                                        className={cn('text-right tabular-nums', {
+                                            'blur-md select-none': hidePrices,
+                                        })}
+                                    >
                                         {tx.buy_price != null
                                             ? formatCurrency(tx.buy_price, currency)
                                             : '—'}
                                     </TableCell>
-                                    <TableCell className="text-right tabular-nums flex-1">
+                                    <TableCell
+                                        className={cn('text-right tabular-nums', {
+                                            'blur-md select-none': hidePrices,
+                                        })}
+                                    >
                                         {tx.value != null
                                             ? formatCurrency(tx.value, currency)
                                             : '—'}
                                     </TableCell>
-                                    <TableCell className="text-right tabular-nums text-muted-foreground flex-1">
+                                    <TableCell
+                                        className={cn(
+                                            'text-right tabular-nums text-muted-foreground',
+                                            {
+                                                'blur-md select-none': hidePrices,
+                                            }
+                                        )}
+                                    >
                                         {formatCurrency(tx.fee, currency)}
                                     </TableCell>
                                 </TableRow>

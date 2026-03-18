@@ -13,16 +13,17 @@ import type { HoldingSummary } from '@/types/Holding'
 import { formatCurrency, formatPercentage } from '@/lib/formaters'
 import { Currency, type CambioRates } from '@/types/Transaction'
 import { computePortfolioTotals } from '@/lib/calculations'
-import { toEur } from '@/lib/utils'
+import { cn, toEur } from '@/lib/utils'
 
 type Props = {
     holdings: HoldingSummary[]
     rates: CambioRates
+    hidePrices: boolean
 }
 
 const currency = Currency.EUR
 
-export function AllocationChart({ holdings, rates }: Props) {
+export function AllocationChart({ holdings, rates, hidePrices }: Props) {
     const { currentValue: totalValue } = computePortfolioTotals(holdings, rates)
 
     const data = useMemo(
@@ -74,7 +75,7 @@ export function AllocationChart({ holdings, rates }: Props) {
                     {data.map((entry) => (
                         <Cell key={entry.name} fill={entry.fill} />
                     ))}
-                    <Label content={renderCenterLabel(totalValue)} />
+                    <Label content={renderCenterLabel(totalValue, hidePrices)} />
                 </Pie>
             </PieChart>
         </ChartContainer>
@@ -115,7 +116,7 @@ function renderCustomLabel({
     )
 }
 
-function renderCenterLabel(totalValue: number) {
+function renderCenterLabel(totalValue: number, hidePrices: boolean) {
     return function CenterLabel({ viewBox }: LabelProps) {
         if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
             return (
@@ -130,7 +131,9 @@ function renderCenterLabel(totalValue: number) {
                     <tspan
                         x={viewBox.cx}
                         y={(viewBox.cy ?? 0) + 10}
-                        className="fill-foreground text-sm font-semibold"
+                        className={cn('fill-foreground text-sm font-semibold', {
+                            'blur-md select-none': hidePrices,
+                        })}
                     >
                         {formatCurrency(totalValue, currency)}
                     </tspan>

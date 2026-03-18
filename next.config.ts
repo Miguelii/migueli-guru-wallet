@@ -17,7 +17,6 @@ const nextConfig: NextConfig = {
             'tw-animate-css',
             'zod',
             'effect',
-            '@tanstack/react-virtual',
         ],
     },
     reactCompiler: true,
@@ -27,12 +26,6 @@ const nextConfig: NextConfig = {
             {
                 pathname: '/assets/**',
             },
-        ],
-        remotePatterns: [
-            { hostname: 'assets.coingecko.com' },
-            { hostname: 's3-symbol-logo.tradingview.com' },
-            { hostname: 'www.vanguard.co.uk' },
-            { hostname: 'via.placeholder.com' },
         ],
         minimumCacheTTL: 2678400, // 31 days
     },

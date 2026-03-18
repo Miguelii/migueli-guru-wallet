@@ -37,7 +37,7 @@ const data: { navMain: NavMain[] } = {
             Icon: LayoutDashboardIcon,
         },
         {
-            title: 'Prices',
+            title: 'Assets Prices',
             url: PRICES_ROUTE_PATH,
             Icon: CircleDollarSignIcon,
         },
@@ -95,14 +95,22 @@ function NavMain({ items }: { items: NavMain[] }) {
                     {items?.map((item) => {
                         const Icon = item.Icon
                         return (
-                            <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton tooltip={item.title} className="cursor-pointer!">
-                                    <Link className="contents" prefetch={false} href={item.url}>
+                            <Link
+                                key={item.title}
+                                className="contents"
+                                prefetch={false}
+                                href={item.url}
+                            >
+                                <SidebarMenuItem>
+                                    <SidebarMenuButton
+                                        tooltip={item.title}
+                                        className="cursor-pointer!"
+                                    >
                                         {Icon && <Icon />}
                                         <span>{item.title}</span>
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            </Link>
                         )
                     })}
                 </SidebarMenu>

@@ -3,23 +3,24 @@ import { AppSidebar } from '@/components/app-sidebar'
 import { RefreshApp } from '@/components/refresh-app'
 import { SignOutApp } from '@/components/sign-out-app'
 import { Separator } from '@/components/ui/separator'
-import {
-    SIDEBAR_COOKIE_NAME,
-    SidebarInset,
-    SidebarProvider,
-    SidebarTrigger,
-} from '@/components/ui/sidebar'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { HidePrices } from '@/components/hide-prices'
 
 type Props = LayoutProps<'/portfolio'>
 
 export default async function PortfolioDashboard({ children }: Props) {
     const cookieStore = await cookies()
-    const sidebarSate = cookieStore.get(SIDEBAR_COOKIE_NAME)
-    const defaultOpen = sidebarSate?.value == null ? true : sidebarSate.value !== 'false'
+
+    const hidePricesCookie = cookieStore.get('hide_prices')
+    const hidePrices = hidePricesCookie?.value == null ? false : hidePricesCookie.value !== 'false'
+
+    const sidebarStateCookie = cookieStore.get('sidebar_state')
+    const sidebarState =
+        sidebarStateCookie?.value == null ? true : sidebarStateCookie.value !== 'false'
 
     return (
         <SidebarProvider
-            defaultOpen={defaultOpen}
+            defaultOpen={sidebarState}
             style={
                 {
                     '--sidebar-width': 'calc(var(--spacing) * 54)',
@@ -35,6 +36,7 @@ export default async function PortfolioDashboard({ children }: Props) {
                         <Separator orientation="vertical" className="mx-2 h-4 top-2 relative" />
                         <h1 className="text-base font-bold w-full">Portfolio</h1>
                         <div className="flex flex-row gap-3">
+                            <HidePrices defaultHide={hidePrices} />
                             <RefreshApp />
                             <SignOutApp />
                         </div>

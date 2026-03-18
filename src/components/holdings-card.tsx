@@ -20,11 +20,12 @@ import { PUBLIC_ASSET_BUCKET_PATH } from '@/lib/constants.server'
 
 type Props = {
     holdings: HoldingSummary[]
+    hidePrices: boolean
 }
 
 const buildId = getBuildId()
 
-export function HoldingsCard({ holdings }: Props) {
+export function HoldingsCard({ holdings, hidePrices }: Props) {
     return (
         <Card className="shadow-sm w-full min-w-0">
             <CardHeader className="flex flex-row items-center gap-2">
@@ -72,19 +73,39 @@ export function HoldingsCard({ holdings }: Props) {
                                         </div>
                                     </div>
                                 </TableCell>
-                                <TableCell className="text-right tabular-nums">
+                                <TableCell
+                                    className={cn('text-right tabular-nums', {
+                                        'blur-md select-none': hidePrices,
+                                    })}
+                                >
                                     {formatQuantity(h.total_quantity)}
                                 </TableCell>
-                                <TableCell className="text-right tabular-nums">
+                                <TableCell
+                                    className={cn('text-right tabular-nums', {
+                                        'blur-md select-none': hidePrices,
+                                    })}
+                                >
                                     {formatCurrency(h.total_invested, h.currency)}
                                 </TableCell>
-                                <TableCell className="text-right tabular-nums">
+                                <TableCell
+                                    className={cn('text-right tabular-nums', {
+                                        'blur-md select-none': hidePrices,
+                                    })}
+                                >
                                     {formatCurrency(h.total_fees, h.currency)}
                                 </TableCell>
-                                <TableCell className="text-right tabular-nums">
+                                <TableCell
+                                    className={cn('text-right tabular-nums', {
+                                        'blur-md select-none': hidePrices,
+                                    })}
+                                >
                                     {formatCurrency(h.current_value, h.currency)}
                                 </TableCell>
-                                <TableCell className="text-right tabular-nums">
+                                <TableCell
+                                    className={cn('text-right tabular-nums', {
+                                        'blur-md select-none': hidePrices,
+                                    })}
+                                >
                                     {formatCurrency(h.avg_cost_per_share, h.currency)}
                                 </TableCell>
                                 <TableCell
@@ -92,6 +113,7 @@ export function HoldingsCard({ holdings }: Props) {
                                         'text-success': h.realized_gl > 0,
                                         'text-destructive': h.realized_gl < 0,
                                         'text-muted-foreground': h.realized_gl == 0,
+                                        'blur-md select-none': hidePrices,
                                     })}
                                 >
                                     {formatSignedCurrency(h.realized_gl, h.currency)}
@@ -101,6 +123,7 @@ export function HoldingsCard({ holdings }: Props) {
                                         'text-success': h.realized_gl_pct > 0,
                                         'text-destructive': h.realized_gl_pct < 0,
                                         'text-muted-foreground': h.realized_gl_pct == 0,
+                                        'blur-md select-none': hidePrices,
                                     })}
                                 >
                                     {formatPercentage(h.realized_gl_pct)}
@@ -110,6 +133,7 @@ export function HoldingsCard({ holdings }: Props) {
                                         'text-success': h.total_gl > 0,
                                         'text-destructive': h.total_gl < 0,
                                         'text-muted-foreground': h.total_gl == 0,
+                                        'blur-md select-none': hidePrices,
                                     })}
                                 >
                                     {formatSignedCurrency(h.total_gl, h.currency)}
@@ -119,6 +143,7 @@ export function HoldingsCard({ holdings }: Props) {
                                         'text-success': h.total_gl_pct > 0,
                                         'text-destructive': h.total_gl_pct < 0,
                                         'text-muted-foreground': h.total_gl_pct == 0,
+                                        'blur-md select-none': hidePrices,
                                     })}
                                 >
                                     {formatPercentage(h.total_gl_pct)}
@@ -128,6 +153,7 @@ export function HoldingsCard({ holdings }: Props) {
                                         'text-success': h.total_gl_with_fees > 0,
                                         'text-destructive': h.total_gl_with_fees < 0,
                                         'text-muted-foreground': h.total_gl_with_fees == 0,
+                                        'blur-md select-none': hidePrices,
                                     })}
                                 >
                                     {formatSignedCurrency(h.total_gl_with_fees, h.currency)}
@@ -137,6 +163,7 @@ export function HoldingsCard({ holdings }: Props) {
                                         'text-success': h.total_gl_with_fees_pct > 0,
                                         'text-destructive': h.total_gl_with_fees_pct < 0,
                                         'text-muted-foreground': h.total_gl_with_fees_pct == 0,
+                                        'blur-md select-none': hidePrices,
                                     })}
                                 >
                                     {formatPercentage(h.total_gl_with_fees_pct)}

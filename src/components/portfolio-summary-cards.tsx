@@ -10,11 +10,12 @@ import { computePortfolioTotals } from '@/lib/calculations'
 type Props = {
     holdings: HoldingSummary[]
     rates: CambioRates
+    hidePrices: boolean
 }
 
 const currency = Currency.EUR
 
-export function PortfolioSummaryCards({ holdings, rates }: Props) {
+export function PortfolioSummaryCards({ holdings, rates, hidePrices }: Props) {
     const cryptoHoldings = holdings.filter((h) => h.tickerType === 'CRYPTO')
     const etfHoldings = holdings.filter((h) => h.tickerType === 'ETF')
     const stockHoldings = holdings.filter((h) => h.tickerType === 'STOCK')
@@ -26,24 +27,28 @@ export function PortfolioSummaryCards({ holdings, rates }: Props) {
                 icon={Wallet}
                 holdings={holdings}
                 rates={rates}
+                hidePrices={hidePrices}
             />
             <PortfolioSummaryCard
                 title="Crypto"
                 icon={Bitcoin}
                 holdings={cryptoHoldings}
                 rates={rates}
+                hidePrices={hidePrices}
             />
             <PortfolioSummaryCard
                 title="ETFs"
                 icon={BarChart3}
                 holdings={etfHoldings}
                 rates={rates}
+                hidePrices={hidePrices}
             />
             <PortfolioSummaryCard
                 title="Stocks"
                 icon={TrendingUp}
                 holdings={stockHoldings}
                 rates={rates}
+                hidePrices={hidePrices}
             />
         </section>
     )
@@ -54,9 +59,16 @@ type PortfolioSummaryCardProps = {
     icon: LucideIcon
     holdings: HoldingSummary[]
     rates: CambioRates
+    hidePrices: boolean
 }
 
-function PortfolioSummaryCard({ title, icon: Icon, holdings, rates }: PortfolioSummaryCardProps) {
+function PortfolioSummaryCard({
+    title,
+    icon: Icon,
+    holdings,
+    rates,
+    hidePrices,
+}: PortfolioSummaryCardProps) {
     const { totalInvested, currentValue, glValue, glPct } = computePortfolioTotals(holdings, rates)
     const isNeutral = glValue == 0
     const isPositive = glValue > 0
@@ -64,12 +76,16 @@ function PortfolioSummaryCard({ title, icon: Icon, holdings, rates }: PortfolioS
 
     return (
         <MetricCard title={title} icon={Icon}>
-            <div>
+            <div className={cn({ 'blur-md select-none': hidePrices })}>
                 <p className="text-2xl font-bold tabular-nums tracking-tight">
                     {formatCurrency(currentValue, currency)}
                 </p>
             </div>
-            <div className="flex items-center justify-between">
+            <div
+                className={cn('flex items-center justify-between', {
+                    'blur-md select-none': hidePrices,
+                })}
+            >
                 <p className="text-xs text-muted-foreground">
                     Invested {formatCurrency(totalInvested, currency)}
                 </p>
