@@ -9,12 +9,22 @@ import { GET_ALL_TRANSACTIONS_CACHE_KEY, GET_ASSETS_CACHE_KEY } from '@/lib/cons
 
 export const dynamic = 'force-dynamic'
 
-async function isAuthorized(request: NextRequest): Promise<boolean> {
+/**
+ * Validates request authorization and bot protection.
+ * API key requests skip bot check (for supabase-to-server requests).
+ * Browser requests require both auth and bot check.
+ * @param request - The incoming request
+ */
+async function isAuthorizedHandler(request: NextRequest): Promise<boolean> {
     const apiKey = request.headers.get('x-api-key')
 
     if (apiKey) {
         return verifyApiKey(apiKey, ServerEnv.NEXT_UPDATE_TICKERS_SECRET_KEY)
     }
+
+    const { isBot } = await checkBotId()
+
+    if (isBot) return false
 
     const supabase = await createSbServerClient(true)
     const { data } = await supabase.auth.getUser()
@@ -23,16 +33,10 @@ async function isAuthorized(request: NextRequest): Promise<boolean> {
 }
 
 export async function POST(request: NextRequest) {
-    const authorized = await isAuthorized(request)
+    const isAuthorized = await isAuthorizedHandler(request)
 
-    if (!authorized) {
+    if (!isAuthorized) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { isBot } = await checkBotId()
-
-    if (isBot) {
-        return NextResponse.json({ error: 'Not Acceptable' }, { status: 406 })
     }
 
     const result = await updateTickersPrices()

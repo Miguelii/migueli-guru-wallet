@@ -1,15 +1,15 @@
 import type { HoldingSummary } from '@/types/Holding'
 import { formatCurrency, formatPercentage, formatSignedCurrency } from '@/lib/formaters'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Wallet, Bitcoin, BarChart3, TrendingUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { MetricCard } from './metric-card'
 
 type Props = {
     holdings: HoldingSummary[]
 }
 
-export function SummaryCards({ holdings }: Props) {
+export function PortfolioSummaryCards({ holdings }: Props) {
     const cryptoHoldings = holdings.filter((h) => h.tickerType === 'CRYPTO')
     const etfHoldings = holdings.filter((h) => h.tickerType === 'ETF')
     const stockHoldings = holdings.filter((h) => h.tickerType === 'STOCK')
@@ -42,34 +42,28 @@ function PortfolioSummaryCard({ title, icon: Icon, holdings }: PortfolioSummaryC
     const currency = 'EUR'
 
     return (
-        <Card className="cursor-pointer gap-0 py-0 hover:shadow-md hover:border-border/80 transition-all duration-200">
-            <CardHeader className="flex flex-row items-center justify-between rounded-t-xl border-b bg-muted/50 py-3!">
-                <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent className="space-y-2 py-4">
-                <div>
-                    <p className="text-2xl font-bold tabular-nums tracking-tight">
-                        {formatCurrency(currentValue, currency)}
-                    </p>
+        <MetricCard title={title} icon={Icon}>
+            <div>
+                <p className="text-2xl font-bold tabular-nums tracking-tight">
+                    {formatCurrency(currentValue, currency)}
+                </p>
+            </div>
+            <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">
+                    Invested {formatCurrency(totalInvested, currency)}
+                </p>
+                <div
+                    className={cn('flex items-center gap-0.5 text-xs font-medium', {
+                        'text-muted-foreground': isNeutral,
+                        'text-success': isPositive,
+                        'text-destructive': isNegative,
+                    })}
+                >
+                    <span className="tabular-nums">
+                        {formatSignedCurrency(glValue, currency)} · {formatPercentage(glPct)}
+                    </span>
                 </div>
-                <div className="flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground">
-                        Invested {formatCurrency(totalInvested, currency)}
-                    </p>
-                    <div
-                        className={cn('flex items-center gap-0.5 text-xs font-medium', {
-                            'text-muted-foreground': isNeutral,
-                            'text-success': isPositive,
-                            'text-destructive': isNegative,
-                        })}
-                    >
-                        <span className="tabular-nums">
-                            {formatSignedCurrency(glValue, currency)} · {formatPercentage(glPct)}
-                        </span>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
+            </div>
+        </MetricCard>
     )
 }

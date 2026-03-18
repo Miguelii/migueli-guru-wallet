@@ -13,10 +13,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { LayoutDashboardIcon, type LucideProps } from 'lucide-react'
+import { CircleDollarSignIcon, LayoutDashboardIcon, type LucideProps } from 'lucide-react'
 import Image from 'next/image'
 import { getBuildId } from '@/lib/utils'
-import { PRIVATE_ROUTE_PATH } from '@/lib/constants'
+import { PRICES_ROUTE_PATH, PRIVATE_ROUTE_PATH } from '@/lib/constants'
+import Link from 'next/link'
 
 type NavIcon = React.ForwardRefExoticComponent<
     Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
@@ -31,9 +32,14 @@ type NavMain = {
 const data: { navMain: NavMain[] } = {
     navMain: [
         {
-            title: 'Dashboard',
+            title: 'Portfolio',
             url: PRIVATE_ROUTE_PATH,
             Icon: LayoutDashboardIcon,
+        },
+        {
+            title: 'Prices',
+            url: PRICES_ROUTE_PATH,
+            Icon: CircleDollarSignIcon,
         },
     ],
 }
@@ -91,8 +97,10 @@ function NavMain({ items }: { items: NavMain[] }) {
                         return (
                             <SidebarMenuItem key={item.title}>
                                 <SidebarMenuButton tooltip={item.title} className="cursor-pointer!">
-                                    {Icon && <Icon />}
-                                    <span>{item.title}</span>
+                                    <Link className="contents" prefetch={false} href={item.url}>
+                                        {Icon && <Icon />}
+                                        <span>{item.title}</span>
+                                    </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         )
