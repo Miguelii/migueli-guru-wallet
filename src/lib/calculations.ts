@@ -1,6 +1,7 @@
-import type { Ticker, TickerData, Transaction } from '@/types/Transaction'
-import { TransactionType } from '@/types/Transaction'
+import type { CambioRates, Ticker, TickerData, Transaction } from '@/types/Transaction'
+import { Currency, TransactionType } from '@/types/Transaction'
 import type { HoldingSummary } from '@/types/Holding'
+import { toEur } from '@/lib/utils'
 
 type CostBasis = {
     totalQuantity: number
@@ -128,7 +129,7 @@ function buildHolding(
         symbol: tickerId,
         tickerLogo: td?.logo as TickerData['logo'],
         tickerHexColor: td?.hex_color as TickerData['hex_color'],
-        currency: td?.currency ?? 'EUR',
+        currency: td?.currency ?? Currency.EUR,
         tickerType: td?.type as TickerData['type'],
         total_quantity: totalQuantity,
         total_invested: totalInvested,
@@ -169,4 +170,35 @@ export function aggregateHoldings(
     }
 
     return holdings
+}
+
+type PortfolioTotals = {
+    totalInvested: number
+    currentValue: number
+    glValue: number
+    glPct: number
+}
+
+/**
+ * Computes portfolio totals (invested, current value, G/L) from holdings,
+ * converting all values to EUR using the provided exchange rates.
+ * @param holdings - Array of holding summaries to aggregate.
+ * @param rates - Exchange rates for currency conversion.
+ */
+export function computePortfolioTotals(
+    holdings: HoldingSummary[],
+    rates: CambioRates
+): PortfolioTotals {
+    const totalInvested = holdings.reduce(
+        (sum, h) => sum + toEur(h.total_invested, h.currency, rates),
+        0
+    )
+    const currentValue = holdings.reduce(
+        (sum, h) => sum + toEur(h.current_value, h.currency, rates),
+        0
+    )
+    const glValue = currentValue - totalInvested
+    const glPct = totalInvested !== 0 ? (glValue / totalInvested) * 100 : 0
+
+    return { totalInvested, currentValue, glValue, glPct }
 }

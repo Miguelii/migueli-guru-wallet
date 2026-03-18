@@ -13,7 +13,7 @@ export function PricesSummaryCards({ data }: Props) {
             {data.map((tick, i) => (
                 <PricesSummaryCard
                     key={`${tick.ticker}-${tick.currency}_${i}`}
-                    title={`${tick.ticker}-${tick.currency}`}
+                    title={`${tick.ticker}`}
                     tick={tick}
                 />
             ))}
@@ -34,7 +34,7 @@ function PricesSummaryCard({ title, tick }: PricesSummaryCardProps) {
             titleColor={tick.hex_color}
             title={title}
             imgSrc={{
-                src: `${PUBLIC_ASSET_BUCKET_PATH}/${tick.logo}`,
+                src: tick?.logo ? `${PUBLIC_ASSET_BUCKET_PATH}/${tick.logo}` : null,
                 alt: `${tick.ticker}-${tick.currency} Logo`,
             }}
         >

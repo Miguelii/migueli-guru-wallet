@@ -23,6 +23,16 @@ export enum Ticker {
     ATCH = 'ATCH',
     VUAA = 'VUAA',
     MON = 'MON',
+    USD_EUR = 'EUR=X',
+}
+
+export enum Currency {
+    EUR = 'EUR',
+    USD = 'USD',
+}
+
+export type CambioRates = {
+    usdToEur: number
 }
 
 export type TickerData = {
@@ -32,9 +42,9 @@ export type TickerData = {
         | `${number}-${number}-${number} ${number}:${number}:${number}`
         | `${number}-${number}-${number}T${number}:${number}:${number}`
     service: 'coinbase' | 'yahoo'
-    currency: 'EUR' | 'USD' | 'CAD'
-    symbol: '€' | '$'
-    logo: `/assets/${string}`
-    hex_color: `#${number}`
-    type: 'CRYPTO' | 'ETF' | 'STOCK'
+    currency: Currency
+    symbol: '€' | '$' | '€-$' | '$-€'
+    logo?: `/assets/${string}` | '/none'
+    hex_color?: `#${number}`
+    type: 'CRYPTO' | 'ETF' | 'STOCK' | 'CAMBIO'
 }

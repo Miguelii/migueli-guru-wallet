@@ -26,7 +26,7 @@ const buildId = getBuildId()
 
 export function HoldingsCard({ holdings }: Props) {
     return (
-        <Card className="shadow-sm">
+        <Card className="shadow-sm w-full min-w-0">
             <CardHeader className="flex flex-row items-center gap-2">
                 <CardTitle>Positions</CardTitle>
             </CardHeader>

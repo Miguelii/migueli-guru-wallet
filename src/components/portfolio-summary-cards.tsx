@@ -4,22 +4,47 @@ import { Wallet, Bitcoin, BarChart3, TrendingUp } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { MetricCard } from './ui/metric-card'
+import { Currency, type CambioRates } from '@/types/Transaction'
+import { computePortfolioTotals } from '@/lib/calculations'
 
 type Props = {
     holdings: HoldingSummary[]
+    rates: CambioRates
 }
 
-export function PortfolioSummaryCards({ holdings }: Props) {
+const currency = Currency.EUR
+
+export function PortfolioSummaryCards({ holdings, rates }: Props) {
     const cryptoHoldings = holdings.filter((h) => h.tickerType === 'CRYPTO')
     const etfHoldings = holdings.filter((h) => h.tickerType === 'ETF')
     const stockHoldings = holdings.filter((h) => h.tickerType === 'STOCK')
 
     return (
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            <PortfolioSummaryCard title="Total Net Worth" icon={Wallet} holdings={holdings} />
-            <PortfolioSummaryCard title="Crypto" icon={Bitcoin} holdings={cryptoHoldings} />
-            <PortfolioSummaryCard title="ETFs" icon={BarChart3} holdings={etfHoldings} />
-            <PortfolioSummaryCard title="Stocks" icon={TrendingUp} holdings={stockHoldings} />
+            <PortfolioSummaryCard
+                title="Total Net Worth"
+                icon={Wallet}
+                holdings={holdings}
+                rates={rates}
+            />
+            <PortfolioSummaryCard
+                title="Crypto"
+                icon={Bitcoin}
+                holdings={cryptoHoldings}
+                rates={rates}
+            />
+            <PortfolioSummaryCard
+                title="ETFs"
+                icon={BarChart3}
+                holdings={etfHoldings}
+                rates={rates}
+            />
+            <PortfolioSummaryCard
+                title="Stocks"
+                icon={TrendingUp}
+                holdings={stockHoldings}
+                rates={rates}
+            />
         </section>
     )
 }
@@ -28,18 +53,14 @@ type PortfolioSummaryCardProps = {
     title: string
     icon: LucideIcon
     holdings: HoldingSummary[]
+    rates: CambioRates
 }
 
-function PortfolioSummaryCard({ title, icon: Icon, holdings }: PortfolioSummaryCardProps) {
-    const totalInvested = holdings.reduce((sum, h) => sum + h.total_invested, 0)
-    const currentValue = holdings.reduce((sum, h) => sum + h.current_value, 0)
-    const glValue = currentValue - totalInvested
-    const glPct = totalInvested !== 0 ? (glValue / totalInvested) * 100 : 0
+function PortfolioSummaryCard({ title, icon: Icon, holdings, rates }: PortfolioSummaryCardProps) {
+    const { totalInvested, currentValue, glValue, glPct } = computePortfolioTotals(holdings, rates)
     const isNeutral = glValue == 0
     const isPositive = glValue > 0
     const isNegative = glValue < 0
-
-    const currency = 'EUR'
 
     return (
         <MetricCard title={title} icon={Icon}>

@@ -8,7 +8,7 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import type { Ticker, TickerData, Transaction } from '@/types/Transaction'
+import { Currency, type Ticker, type TickerData, type Transaction } from '@/types/Transaction'
 import { formatCurrency, formatDate, formatQuantity } from '@/lib/formaters'
 import { TYPE_BADGE_VARIANT, TYPE_LABEL } from '@/lib/constants'
 
@@ -40,7 +40,7 @@ export function TransactionsCard({ transactions, tickerData }: Props) {
                     </TableHeader>
                     <TableBody>
                         {transactions.map((tx) => {
-                            const currency = currencyMap.get(tx.ticker_id) ?? 'EUR'
+                            const currency = currencyMap.get(tx.ticker_id) ?? Currency.EUR
                             return (
                                 <TableRow
                                     key={tx.id}

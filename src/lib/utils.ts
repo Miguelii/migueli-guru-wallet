@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import type { TickerData } from '@/types/Transaction'
+import { Currency, type CambioRates, type TickerData } from '@/types/Transaction'
 
 /**
  * Merges Tailwind CSS classes with `clsx` and `tailwind-merge`,
@@ -31,4 +31,16 @@ export function getLatestUpdate(data: TickerData[]): string {
     const split = latest.last_updated_at.split('T')
     if (split?.length === 1) return split.at(0)!
     return `${split.at(0)} ${split.at(1)}`
+}
+
+/**
+ * Converts a value to EUR using the appropriate exchange rate.
+ * Returns the value unchanged if already in EUR.
+ * @param value - The numeric value to convert.
+ * @param currency - The currency of the value.
+ * @param rates - The exchange rates for conversion.
+ */
+export function toEur(value: number, currency: TickerData['currency'], rates: CambioRates): number {
+    if (currency === Currency.USD) return value * rates.usdToEur
+    return value
 }

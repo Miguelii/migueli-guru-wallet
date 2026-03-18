@@ -2,21 +2,31 @@
 const currencyFormatters = new Map<string, Intl.NumberFormat>()
 
 /**
+ * Extracts a valid ISO 4217 currency code from a currency string.
+ * Handles currency pairs like `'EUR-USD'` by returning the last segment (`'USD'`).
+ * @param currency - Currency code or pair (e.g. `'EUR'`, `'EUR-USD'`).
+ */
+function toIsoCurrency(currency: string): string {
+    return currency.includes('-') ? currency.split('-').pop()! : currency
+}
+
+/**
  * Returns a cached `Intl.NumberFormat` for the given currency (pt-PT locale, 2 decimal places).
  * Creates and caches a new formatter on first access.
  * @param currency - ISO 4217 currency code (e.g. `'EUR'`, `'USD'`).
  */
 function getCurrencyFormatter(currency: string): Intl.NumberFormat {
-    const cached = currencyFormatters.get(currency)
+    const iso = toIsoCurrency(currency)
+    const cached = currencyFormatters.get(iso)
     if (cached) return cached
 
     const formatter = new Intl.NumberFormat('pt-PT', {
         style: 'currency',
-        currency,
+        currency: iso,
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     })
-    currencyFormatters.set(currency, formatter)
+    currencyFormatters.set(iso, formatter)
     return formatter
 }
 

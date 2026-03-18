@@ -6,7 +6,7 @@ import { getBuildId } from '@/lib/utils'
 import { Skeleton } from './skeleton'
 
 type IconProps = { icon: LucideIcon; imgSrc?: never }
-type ImgProps = { icon?: never; imgSrc: { src: string; alt: string } }
+type ImgProps = { icon?: never; imgSrc: { src: string | null; alt: string } }
 
 type Props = PropsWithChildren<
     {
@@ -38,14 +38,18 @@ export function MetricCard({ title, icon: Icon, imgSrc, children, titleColor }: 
                 {Icon ? (
                     <Icon className="h-4 w-4 text-muted-foreground" />
                 ) : (
-                    <Image
-                        src={`${imgSrc.src}?v=${buildId}`}
-                        alt={imgSrc.alt}
-                        width={16}
-                        height={16}
-                        className="rounded-full"
-                        unoptimized
-                    />
+                    <>
+                        {imgSrc.src && (
+                            <Image
+                                src={`${imgSrc.src}?v=${buildId}`}
+                                alt={imgSrc.alt}
+                                width={16}
+                                height={16}
+                                className="rounded-full"
+                                unoptimized
+                            />
+                        )}
+                    </>
                 )}
             </CardHeader>
             <CardContent className="space-y-2 py-4">{children}</CardContent>

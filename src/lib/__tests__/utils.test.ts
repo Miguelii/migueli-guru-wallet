@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { cn, getBuildId, getLatestUpdate } from '@/lib/utils'
 import type { TickerData } from '@/types/Transaction'
-import { Ticker } from '@/types/Transaction'
+import { Currency, Ticker } from '@/types/Transaction'
 
 // ─── cn ──────────────────────────────────────────────────────────────────────
 
@@ -65,7 +65,7 @@ describe('getBuildId', () => {
 const baseTicker: Omit<TickerData, 'ticker' | 'last_updated_at'> = {
     curr_price: 2000,
     service: 'coinbase',
-    currency: 'EUR',
+    currency: Currency.EUR,
     symbol: '€',
     logo: '/assets/ethereum.webp',
     hex_color: '#627EEA' as TickerData['hex_color'],

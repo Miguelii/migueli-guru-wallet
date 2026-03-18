@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { aggregateHoldings } from '@/lib/calculations'
 import type { Transaction, TickerData } from '@/types/Transaction'
-import { TransactionType, Ticker } from '@/types/Transaction'
+import { TransactionType, Ticker, Currency } from '@/types/Transaction'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -9,7 +9,7 @@ const makeTd = (overrides: Partial<TickerData> & { ticker: Ticker }): TickerData
     curr_price: 0,
     last_updated_at: '2026-03-17 10:00:00',
     service: 'coinbase',
-    currency: 'EUR',
+    currency: Currency.EUR,
     symbol: '€',
     logo: '/assets/ethereum.webp',
     hex_color: '#627EEA' as TickerData['hex_color'],
