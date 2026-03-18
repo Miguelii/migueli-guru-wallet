@@ -1,14 +1,25 @@
+import { cookies } from 'next/headers'
 import { AppSidebar } from '@/components/app-sidebar'
 import { RefreshApp } from '@/components/refresh-app'
 import { SignOutApp } from '@/components/sign-out-app'
 import { Separator } from '@/components/ui/separator'
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import {
+    SIDEBAR_COOKIE_NAME,
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
+} from '@/components/ui/sidebar'
 
 type Props = LayoutProps<'/portfolio'>
 
 export default async function PortfolioDashboard({ children }: Props) {
+    const cookieStore = await cookies()
+    const sidebarSate = cookieStore.get(SIDEBAR_COOKIE_NAME)
+    const defaultOpen = sidebarSate?.value == null ? true : sidebarSate.value !== 'false'
+
     return (
         <SidebarProvider
+            defaultOpen={defaultOpen}
             style={
                 {
                     '--sidebar-width': 'calc(var(--spacing) * 54)',

@@ -8,7 +8,13 @@ import {
     TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Currency, type Ticker, type TickerData, type Transaction } from '@/types/Transaction'
+import {
+    Currency,
+    TransactionType,
+    type Ticker,
+    type TickerData,
+    type Transaction,
+} from '@/types/Transaction'
 import { formatCurrency, formatDate, formatQuantity } from '@/lib/formaters'
 import { TYPE_BADGE_VARIANT, TYPE_LABEL } from '@/lib/constants'
 
@@ -56,7 +62,9 @@ export function TransactionsCard({ transactions, tickerData }: Props) {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="text-right tabular-nums">
-                                        {tx.quantity != null ? formatQuantity(tx.quantity) : '—'}
+                                        {tx.quantity != null && tx.type !== TransactionType.Fee
+                                            ? formatQuantity(tx.quantity)
+                                            : '—'}
                                     </TableCell>
                                     <TableCell className="text-right tabular-nums">
                                         {tx.buy_price != null
