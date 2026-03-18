@@ -24,7 +24,7 @@ export function SignOutApp() {
             size="icon"
             onClick={onClick}
             disabled={isPending}
-            className="h-12 w-fit cursor-pointer px-2.5 flex flex-row gap-1.5 ring-1 ring-foreground/10"
+            className="h-8 w-fit cursor-pointer px-2.5 flex flex-row gap-1.5 ring-1 ring-foreground/10"
         >
             {isPending ? (
                 <Loader2Icon className="size-4 animate-spin" />
