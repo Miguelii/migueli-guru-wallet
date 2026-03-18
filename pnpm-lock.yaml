@@ -22,6 +22,9 @@ importers:
             '@t3-oss/env-nextjs':
                 specifier: ^0.13.10
                 version: 0.13.10(typescript@5.9.3)(zod@4.3.6)
+            '@tanstack/react-virtual':
+                specifier: ^3.13.23
+                version: 3.13.23(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
             '@vercel/analytics':
                 specifier: ^2.0.1
                 version: 2.0.1(next@16.1.6(@babel/core@7.29.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
@@ -1732,6 +1735,21 @@ packages:
         resolution:
             {
                 integrity: sha512-OEwGIBnXnj7zJeonOh6ZG9woofIjGrd2BORfvE5p9USYKDCZoQmfqLcfNiRWoJlRWLdNPn2IgVZuWAOM4iTYMw==,
+            }
+
+    '@tanstack/react-virtual@3.13.23':
+        resolution:
+            {
+                integrity: sha512-XnMRnHQ23piOVj2bzJqHrRrLg4r+F86fuBcwteKfbIjJrtGxb4z7tIvPVAe4B+4UVwo9G4Giuz5fmapcrnZ0OQ==,
+            }
+        peerDependencies:
+            react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+            react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+    '@tanstack/virtual-core@3.13.23':
+        resolution:
+            {
+                integrity: sha512-zSz2Z2HNyLjCplANTDyl3BcdQJc2k1+yyFoKhNRmCr7V7dY8o8q5m8uFTI1/Pg1kL+Hgrz6u3Xo6eFUB7l66cg==,
             }
 
     '@testing-library/jest-dom@6.9.1':
@@ -7663,6 +7681,14 @@ snapshots:
             '@tailwindcss/oxide': 4.2.1
             postcss: 8.5.8
             tailwindcss: 4.2.1
+
+    '@tanstack/react-virtual@3.13.23(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+        dependencies:
+            '@tanstack/virtual-core': 3.13.23
+            react: 19.2.3
+            react-dom: 19.2.3(react@19.2.3)
+
+    '@tanstack/virtual-core@3.13.23': {}
 
     '@testing-library/jest-dom@6.9.1':
         dependencies:

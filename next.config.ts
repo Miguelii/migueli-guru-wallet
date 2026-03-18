@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
             'tw-animate-css',
             'zod',
             'effect',
+            '@tanstack/react-virtual',
         ],
     },
     reactCompiler: true,
