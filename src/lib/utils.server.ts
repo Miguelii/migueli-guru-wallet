@@ -5,8 +5,9 @@ import type { GetAllCookies, SetAllCookies } from '@supabase/ssr/dist/main/types
 import { cookies } from 'next/headers'
 import { ServerEnv } from '@/env/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { HOME_PAGE_PATH, PRIVATE_ROUTE_PATH, STATIC_PREFIXES } from '@/lib/constants'
+import { HOME_PAGE_PATH, PRIVATE_ROUTE_PATH } from '@/lib/constants'
 import { timingSafeEqual } from 'node:crypto'
+import { STATIC_PREFIXES } from '@/lib/constants.server'
 
 /**
  * Checks whether a given pathname corresponds to a static file
@@ -139,5 +140,3 @@ export function verifyApiKey(apiKey: string, expected: string): boolean {
 
     return timingSafeEqual(Buffer.from(apiKey), Buffer.from(expected))
 }
-
-export const PUBLIC_ASSET_BUCKET_PATH = `${ServerEnv.NEXT_SUPABASE_URL}/storage/v1/object/public/public_assets`

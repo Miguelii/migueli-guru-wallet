@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import type { TickerData } from '@/types/Transaction'
 import { formatCurrency } from '@/lib/formaters'
 import { getBuildId, getLatestUpdate } from '@/lib/utils'
-import { PUBLIC_ASSET_BUCKET_PATH } from '@/lib/utils.server'
+import { PUBLIC_ASSET_BUCKET_PATH } from '@/lib/constants.server'
 
 type Props = {
     data: TickerData[]

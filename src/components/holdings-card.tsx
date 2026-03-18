@@ -16,7 +16,7 @@ import {
 import Image from 'next/image'
 import type { HoldingSummary } from '@/types/Holding'
 import { cn, getBuildId } from '@/lib/utils'
-import { PUBLIC_ASSET_BUCKET_PATH } from '@/lib/utils.server'
+import { PUBLIC_ASSET_BUCKET_PATH } from '@/lib/constants.server'
 
 type Props = {
     holdings: HoldingSummary[]

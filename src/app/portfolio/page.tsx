@@ -1,7 +1,7 @@
-import { getCryptoAssets } from '@/services/get-crypto-assets'
+import { getAllTransactions } from '@/services/get-all-transactions'
 import { aggregateHoldings } from '@/lib/calculations'
 import { TransactionsCard } from '@/components/transactions-card'
-import { getData } from '@/services/get-data'
+import { getAssets } from '@/services/get-assets'
 import { CurrentPricesBadges } from '@/components/current-prices-badges'
 import { SummaryCards } from '@/components/summary-cards'
 import { AllocationCardWithChart } from '@/components/allocation-card-with-chart'
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function PortfolioPage() {
-    const [transactions, data] = await Promise.all([getCryptoAssets(), getData()])
+    const [transactions, data] = await Promise.all([getAllTransactions(), getAssets()])
 
     const holdings = aggregateHoldings(transactions, data)
 

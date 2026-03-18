@@ -15,11 +15,11 @@ initBotId({
         },
         {
             path: PRIVATE_ROUTE_PATH,
-            method: '*',
+            method: 'POST',
         },
         {
             path: HOME_PAGE_PATH,
-            method: '*',
+            method: 'POST',
         },
     ],
 })

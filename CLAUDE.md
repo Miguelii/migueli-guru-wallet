@@ -49,7 +49,7 @@ src/
     header.tsx            # Navigation header
   services/
     get-crypto-assets.ts  # Fetch transactions from Supabase (cached)
-    get-data.ts           # Fetch ticker/price data from Supabase (cached)
+    get-assets.ts           # Fetch ticker/price data from Supabase (cached)
     sb-login-action.ts    # Server action for authentication
     sign-out-action.ts        # Server action for sign out
     update-tickers-prices.ts  # Fetch & update current prices (Coinbase + Yahoo Finance)

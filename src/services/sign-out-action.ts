@@ -5,6 +5,7 @@ import { Logger } from '@/lib/logger'
 import { createSbServerClient } from '@/lib/utils.server'
 import { revalidatePath } from 'next/cache'
 import { Effect } from 'effect'
+import { CreateSbClientError, SignOutError } from '@/lib/constants.server'
 
 /**
  * Server action that signs out the current user and revalidates the home page.
@@ -14,20 +15,22 @@ export async function signOutAction() {
     const program = Effect.gen(function* () {
         const supabase = yield* Effect.tryPromise({
             try: () => createSbServerClient(),
-            catch: (e) => new Error(`Failed createSbServerClient: ${String(e)}`),
+            catch: (cause) => new CreateSbClientError({ cause }),
         })
 
         const { error } = yield* Effect.tryPromise({
             try: () => supabase.auth.signOut(),
-            catch: (e) => new Error(`signOut failed: ${String(e)}`),
+            catch: (cause) => new SignOutError({ cause }),
         })
 
-        if (error) return yield* Effect.fail(error)
+        if (error)
+            return yield* Effect.fail(new SignOutError({ cause: error, message: error?.message }))
 
         revalidatePath(HOME_PAGE_PATH, 'layout')
     }).pipe(
         Effect.catchAll((error) => {
-            Logger.error('[Effect] signOutAction failed', error)
+            const errorTag = '_tag' in error ? error._tag : 'Error'
+            Logger.error(`[signOutAction Effect] [${errorTag}] failed`, error)
             return Effect.void
         })
     )

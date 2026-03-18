@@ -9,6 +9,12 @@ import YahooFinance from 'yahoo-finance2'
 import type { CoinbaseJson } from '@/types/CoinbaseJson'
 import type { SbClient } from '@/types/SbClient'
 import { Effect, Schedule } from 'effect'
+import {
+    CreateSbClientError,
+    GetCoinbasePriceError,
+    GetFinancePriceError,
+    SbQueryError,
+} from '@/lib/constants.server'
 
 type Return = {
     success: boolean
@@ -45,12 +51,12 @@ export async function updateTickersPrices(): Promise<Return> {
     const program = Effect.gen(function* () {
         const supabase = yield* Effect.tryPromise({
             try: () => createSbServerClient(true),
-            catch: (e) => new Error(`Failed createSbServerClient: ${String(e)}`),
+            catch: (cause) => new CreateSbClientError({ cause }),
         })
 
         const { data: tickerRows } = yield* Effect.tryPromise({
             try: () => supabase.from(SbTables.DATA).select('*'),
-            catch: (e) => new Error(`Failed to fetch tickers: ${String(e)}`),
+            catch: (cause) => new SbQueryError({ cause }),
         })
 
         const tickers = ((tickerRows ?? []) as TickerData[]).filter(
@@ -67,7 +73,7 @@ export async function updateTickersPrices(): Promise<Return> {
         } satisfies Return
     }).pipe(
         Effect.catchAll((error) => {
-            Logger.error('[Effect] updateTickersPrices failed', error)
+            Logger.error(`[updateTickersPrices Effect] [${error?._tag}] failed`, error)
             return Effect.succeed({
                 success: false,
                 status: 207,
@@ -103,7 +109,7 @@ function getCoinbasePrice(tick: TickerData): Effect.Effect<number | null, Error>
 
             return json?.data?.amount ? Number(json.data.amount) : null
         },
-        catch: (error) => new Error(`getCoinbasePrice-${tick.ticker}: ${String(error)}`),
+        catch: (cause) => new GetCoinbasePriceError({ cause }),
     })
 }
 
@@ -125,7 +131,7 @@ function getFinancePrice(tick: TickerData): Effect.Effect<number | null, Error> 
 
             return Number(quote.ask)
         },
-        catch: (error) => new Error(`getFinancePrice-${tick.ticker}: ${String(error)}`),
+        catch: (cause) => new GetFinancePriceError({ cause }),
     })
 }
 
@@ -143,7 +149,7 @@ function fetchPrice(tick: TickerData): Effect.Effect<number | null> {
     return fetcher(tick).pipe(
         Effect.retry(retryPolicy),
         Effect.catchAll((error) => {
-            Logger.error(`[Effect] Price fetch failed after retries`, error)
+            Logger.error(`[fetchPrice Effect] fetch failed after retries`, error)
             return Effect.succeed(null)
         })
     )
@@ -168,15 +174,15 @@ function updateTicker(supabase: SbClient, tick: TickerData): Effect.Effect<void>
                     .from(SbTables.DATA)
                     .update({ curr_price: price, last_updated_at: 'now()' })
                     .eq('ticker', tick.ticker),
-            catch: (e) => new Error(`DB update failed for ${tick.ticker}: ${String(e)}`),
+            catch: (cause) => new SbQueryError({ cause }),
         })
 
-        if (error) {
-            Logger.error(`Error updating price for ${tick.ticker} |${JSON.stringify(error)}|`)
-        }
+        if (error)
+            return yield* Effect.fail(new SbQueryError({ cause: error, message: error?.message }))
     }).pipe(
         Effect.catchAll((error) => {
-            Logger.error(`[Effect] updateTicker failed for ${tick.ticker}`, error)
+            const errorTag = '_tag' in error ? error._tag : 'Error'
+            Logger.error(`[updateTicker Effect] [${errorTag}] failed for [${tick.ticker}]`, error)
             return Effect.void
         })
     )

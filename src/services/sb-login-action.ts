@@ -5,6 +5,7 @@ import { createSbServerClient } from '@/lib/utils.server'
 import { z } from 'zod'
 import { checkBotId } from 'botid/server'
 import { Effect } from 'effect'
+import { CreateSbClientError, IsBotError, SignInWithPasswordError } from '@/lib/constants.server'
 
 const loginSchema = z.object({
     email: z.email(),
@@ -34,7 +35,7 @@ export async function sbLoginAction(props: Props): Promise<Return> {
 
         const { isBot } = yield* Effect.tryPromise({
             try: () => checkBotId(),
-            catch: (e) => new Error(`Bot check failed: ${String(e)}`),
+            catch: (cause) => new IsBotError({ cause, message: 'VERCEL_BOT_PROTECTION' }),
         })
 
         if (isBot) {
@@ -43,7 +44,7 @@ export async function sbLoginAction(props: Props): Promise<Return> {
 
         const supabase = yield* Effect.tryPromise({
             try: () => createSbServerClient(),
-            catch: (e) => new Error(`Failed to create Supabase client: ${String(e)}`),
+            catch: (cause) => new CreateSbClientError({ cause }),
         })
 
         const { error } = yield* Effect.tryPromise({
@@ -52,19 +53,22 @@ export async function sbLoginAction(props: Props): Promise<Return> {
                     email: result.data.email,
                     password: result.data.password,
                 }),
-            catch: (e) => new Error(`signInWithPassword failed: ${String(e)}`),
+            catch: (cause) => new SignInWithPasswordError({ cause }),
         })
 
-        if (error) {
-            return yield* Effect.fail(new Error(JSON.stringify(error)))
-        }
+        if (error)
+            return yield* Effect.fail(
+                new SignInWithPasswordError({ cause: error, message: error?.message })
+            )
 
         return { status: 200 } satisfies Return
     }).pipe(
         Effect.catchAll((error) => {
-            Logger.error('[Effect] sbLoginAction failed', error)
+            const errorTag = '_tag' in error ? error._tag : 'Error'
+            const isBotError = errorTag === 'IsBotError'
+            Logger.error(`[sbLoginAction Effect] [${errorTag}] failed`, error)
             return Effect.succeed({
-                status: 400,
+                status: isBotError ? 406 : 400,
                 error: 'Bad Credentials',
             } satisfies Return)
         })

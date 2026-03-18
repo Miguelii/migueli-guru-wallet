@@ -1,14 +1,11 @@
 import { ServerEnv } from '@/env/server'
-import {
-    GET_CRYPTO_ASSETS_CACHE_KEY,
-    GET_DATA_CACHE_KEY,
-    PRIVATE_ROUTE_PATH,
-} from '@/lib/constants'
+import { PRIVATE_ROUTE_PATH } from '@/lib/constants'
 import { updateTickersPrices } from '@/services/update-tickers-prices'
 import { createSbServerClient, verifyApiKey } from '@/lib/utils.server'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { type NextRequest, NextResponse } from 'next/server'
 import { checkBotId } from 'botid/server'
+import { GET_ALL_TRANSACTIONS_CACHE_KEY, GET_ASSETS_CACHE_KEY } from '@/lib/constants.server'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,9 +41,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ status: result.status })
     }
 
-    revalidateTag(GET_DATA_CACHE_KEY, 'max')
+    revalidateTag(GET_ASSETS_CACHE_KEY, 'max')
 
-    revalidateTag(GET_CRYPTO_ASSETS_CACHE_KEY, 'max')
+    revalidateTag(GET_ALL_TRANSACTIONS_CACHE_KEY, 'max')
 
     revalidatePath(PRIVATE_ROUTE_PATH, 'layout')
 
