@@ -1,5 +1,3 @@
-const currencyFormatters = new Map<string, Intl.NumberFormat>()
-
 /**
  * Extracts a valid ISO 4217 currency code from a currency string.
  * Handles currency pairs like `'EUR-USD'` by returning the last segment (`'USD'`).
@@ -14,18 +12,14 @@ function toIsoCurrency(currency: string): string {
  * Creates and caches a new formatter on first access.
  * @param currency - ISO 4217 currency code (e.g. `'EUR'`, `'USD'`).
  */
-function getCurrencyFormatter(currency: string): Intl.NumberFormat {
+function getCurrencyFormatter(currency: string, decimals = 2): Intl.NumberFormat {
     const iso = toIsoCurrency(currency)
-    const cached = currencyFormatters.get(iso)
-    if (cached) return cached
-
     const formatter = new Intl.NumberFormat('pt-PT', {
         style: 'currency',
         currency: iso,
         minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        maximumFractionDigits: decimals,
     })
-    currencyFormatters.set(iso, formatter)
     return formatter
 }
 
@@ -34,8 +28,8 @@ function getCurrencyFormatter(currency: string): Intl.NumberFormat {
  * @param value - The numeric value to format.
  * @param currency - ISO 4217 currency code (e.g. `'EUR'`, `'USD'`).
  */
-export function formatCurrency(value: number, currency: string): string {
-    return getCurrencyFormatter(currency).format(value)
+export function formatCurrency(value: number, currency: string, decimals = 2): string {
+    return getCurrencyFormatter(currency, decimals).format(value)
 }
 
 /**
@@ -63,8 +57,8 @@ export function formatPercentage(value: number): string {
  * @param value - The numeric value to format (sign is preserved).
  * @param currency - ISO 4217 currency code (e.g. `'EUR'`, `'USD'`).
  */
-export function formatSignedCurrency(value: number, currency: string): string {
-    return `${getCurrencyFormatter(currency).format(value)}`
+export function formatSignedCurrency(value: number, currency: string, decimals = 2): string {
+    return `${getCurrencyFormatter(currency, decimals).format(value)}`
 }
 
 /**

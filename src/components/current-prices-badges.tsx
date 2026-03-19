@@ -33,7 +33,7 @@ export function CurrentPricesBadges({ data }: Props) {
                         )}
                         <span className="font-semibold text-xs">{td.ticker}</span>
                         <span className="text-xs text-muted-foreground">
-                            {formatCurrency(td.curr_price, td.currency)}
+                            {formatCurrency(td.curr_price, td.currency, 4)}
                         </span>
                     </Badge>
                 ))}
