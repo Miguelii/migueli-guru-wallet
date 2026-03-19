@@ -1,4 +1,3 @@
-/** Cache of `Intl.NumberFormat` instances keyed by currency code. */
 const currencyFormatters = new Map<string, Intl.NumberFormat>()
 
 /**

@@ -4,7 +4,6 @@ import { Currency, type CambioRates, type TickerData } from '@/types/Transaction
 
 /**
  * Merges Tailwind CSS classes with `clsx` and `tailwind-merge`,
- * resolving conflicts (e.g. `p-2` vs `p-4`) automatically.
  * @param inputs - Class values (strings, objects, arrays) to merge.
  */
 export function cn(...inputs: ClassValue[]) {

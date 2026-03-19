@@ -9,7 +9,8 @@ import { CreateSbClientError, SignOutError } from '@/lib/constants.server'
 
 /**
  * Server action that signs out the current user and revalidates the home page.
- * Logs and silently recovers from any errors.
+ *
+ * @returns {void}
  */
 export async function signOutAction() {
     const program = Effect.gen(function* () {

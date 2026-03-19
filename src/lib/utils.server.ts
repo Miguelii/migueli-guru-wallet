@@ -20,9 +20,6 @@ export const isPathFromStaticFiles = (pathname: string): boolean => {
 
 /**
  * Creates a Supabase server client with cookie-based session management.
- * Uses `next/headers` cookies by default. Pass optional `hooks` to run
- * additional logic after the default `getAll`/`setAll` handlers
- * (e.g. syncing cookies onto a middleware request/response).
  *
  * Always create a new client per request (required for Fluid compute).
  * @param hooks - Optional callbacks that run after the default cookie handlers.

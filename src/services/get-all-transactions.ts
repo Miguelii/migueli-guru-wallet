@@ -16,7 +16,7 @@ import { Effect } from 'effect'
 
 /**
  * Creates a cached function that fetches all transactions from the database.
- * Uses `unstable_cache` with a 4h revalidation window and tagged cache key.
+ *
  * @param supabase - The Supabase client
  * @param userId - The authenticated user's session ID (used as cache key segment)
  */
@@ -41,7 +41,7 @@ const getAllTransactionsFn = (supabase: SbClient, userId: string) =>
 
 /**
  * Fetches all asset transactions for the authenticated user.
- * Returns an empty array if the user is not authenticated or if an error occurs.
+ *
  * @returns A promise resolving to the list of transactions
  */
 export async function getAllTransactions(): Promise<Transaction[]> {

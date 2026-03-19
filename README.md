@@ -21,4 +21,4 @@ This project uses automated code quality tools to maintain consistency:
 
 ## Preview
 
-![alt text](/public/assets/preview.webp)
+![alt text](/public/assets/preview_v1.webp)

@@ -21,7 +21,7 @@ type Return = {
 
 /**
  * Server action that authenticates a user with email and password via Supabase Auth.
- * Validates input with zod, checks bot protection, and signs in with Supabase.
+ *
  * @param props - The login credentials (email and password)
  * @returns A promise resolving to `{ status, error? }` — `200` on success, `400` on failure
  */

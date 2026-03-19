@@ -21,6 +21,14 @@ type Return = {
     status: number
 }
 
+const priceFetchers: Record<
+    TickerData['service'],
+    (tick: TickerData) => Effect.Effect<number | null, Error>
+> = {
+    coinbase: getCoinbasePrice,
+    yahoo: getFinancePrice,
+}
+
 /**
  * Retry policy with exponential backoff starting at 2 seconds, jittered (80%-120%),
  * limited to 2 retries. Approximate delays: ~2s → ~4s (total max wait: ~6s before giving up).
@@ -30,15 +38,6 @@ const retryPolicy = Schedule.exponential('2 second').pipe(
     Schedule.jittered,
     Schedule.intersect(Schedule.recurs(2))
 )
-
-/** Map of service names to their respective price fetcher functions. */
-const priceFetchers: Record<
-    TickerData['service'],
-    (tick: TickerData) => Effect.Effect<number | null, Error>
-> = {
-    coinbase: getCoinbasePrice,
-    yahoo: getFinancePrice,
-}
 
 /**
  * Updates all ticker prices by fetching from external APIs and saving to the database.
