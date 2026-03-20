@@ -4,5 +4,5 @@
     "entry": ["src/env/load-system-envs.ts"],
     "ignoreBinaries": ["tsx"],
     "ignoreDependencies": ["husky"],
-    "ignore": ["src/components/ui/**"]
+    "ignore": ["src/components/ui/**", "public/sw.js"]
 }

@@ -1,5 +1,5 @@
 import type { NextResponse } from 'next/server'
-import { NEXT_IMAGE_PATH } from '@/lib/constants.server'
+import { NEXT_IMAGE_PATH, SW_PATH } from '@/lib/constants.server'
 import { isPathFromStaticFiles } from '@/lib/utils.server'
 
 export const setCSP = (response: NextResponse, pathname: string) => {
@@ -7,12 +7,19 @@ export const setCSP = (response: NextResponse, pathname: string) => {
     const staticCsp = generateStaticCSP()
 
     if (isPathFromStaticFiles(pathname)) {
-        response.headers.set('Content-Security-Policy', staticCsp)
-
-        if (pathname.startsWith(NEXT_IMAGE_PATH)) {
-            response.headers.set('Cache-Control', 'public, max-age=31536000, must-revalidate')
+        // Special case for PWA
+        if (pathname.startsWith(SW_PATH)) {
+            response.headers.set('Content-Type', 'application/javascript; charset=utf-8')
+            response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate')
+            response.headers.set('Content-Security-Policy', "default-src 'self'; script-src 'self'")
         } else {
-            response.headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+            response.headers.set('Content-Security-Policy', staticCsp)
+
+            if (pathname.startsWith(NEXT_IMAGE_PATH)) {
+                response.headers.set('Cache-Control', 'public, max-age=31536000, must-revalidate')
+            } else {
+                response.headers.set('Cache-Control', 'public, max-age=31536000, immutable')
+            }
         }
     } else {
         response.headers.set('Content-Security-Policy', csp)

@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 import { SpeedInsights as VercelSpeedInsights } from '@vercel/speed-insights/next'
+import { ServiceWorkerRegister } from '@/components/service-worker-register'
 
 const geistSans = Geist({
     variable: '--font-sans',
@@ -24,6 +25,7 @@ export const viewport: Viewport = {
     width: 'device-width',
     initialScale: 1,
     height: 'device-height',
+    themeColor: '#fbfbfd',
 }
 
 type Props = LayoutProps<'/'>
@@ -31,6 +33,10 @@ type Props = LayoutProps<'/'>
 export default function RootLayout({ children }: Props) {
     return (
         <html lang="en">
+            <head>
+                <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+                <meta name="apple-mobile-web-app-title" content="GuruFiances" />
+            </head>
             <VercelAnalytics />
             <VercelSpeedInsights />
             <body
@@ -49,6 +55,7 @@ export default function RootLayout({ children }: Props) {
                     <div className="flex-1">{children}</div>
                 </TooltipProvider>
                 <Toaster />
+                <ServiceWorkerRegister />
             </body>
         </html>
     )

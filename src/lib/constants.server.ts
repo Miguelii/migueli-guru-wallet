@@ -7,7 +7,20 @@ export const PUBLIC_ASSET_BUCKET_PATH = `${ServerEnv.NEXT_SUPABASE_URL}/storage/
 
 export const NEXT_IMAGE_PATH = '/_next/image'
 
-export const STATIC_PREFIXES = ['/_next', '/api/', '/assets', '/favicon', '/robots.txt', '/script']
+export const SW_PATH = '/sw.js'
+
+export const STATIC_PREFIXES = [
+    '/_next',
+    '/api/',
+    '/assets',
+    '/favicon',
+    '/robots.txt',
+    '/script',
+    '/sw.js',
+    '/apple-touch-icon',
+    '/web-app-manifest-192x192',
+    '/web-app-manifest-512x512',
+]
 
 export const GET_ASSETS_CACHE_KEY = 'getAssets'
 
