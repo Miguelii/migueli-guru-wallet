@@ -8,21 +8,22 @@ import { HoldingsCard } from '@/components/holdings-card'
 import type { Metadata } from 'next'
 import { PortfolioSummaryCards } from '@/components/portfolio-summary-cards'
 import { Ticker, type CambioRates } from '@/types/Transaction'
-import { cookies } from 'next/headers'
+import { searchParamsCache } from '@/lib/searchParams'
 
 export const metadata: Metadata = {
     title: 'Portfolio | Migueli Guru Finances',
 }
 
-export default async function PortfolioPage() {
-    const [transactions, data, cookieStore] = await Promise.all([
+type Props = PageProps<'/portfolio'>
+
+export default async function PortfolioPage(props: Props) {
+    const [transactions, data, searchParams] = await Promise.all([
         getAllTransactions(),
         getAssets(),
-        cookies(),
+        searchParamsCache.parse(props.searchParams),
     ])
 
-    const hidePricesCookie = cookieStore.get('hide_prices')
-    const hidePrices = hidePricesCookie?.value == null ? false : hidePricesCookie.value !== 'false'
+    const hidePrices = searchParams.hide_prices
 
     const holdings = aggregateHoldings(transactions, data)
 

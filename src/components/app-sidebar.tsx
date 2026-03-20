@@ -18,6 +18,7 @@ import Image from 'next/image'
 import { getBuildId } from '@/lib/utils'
 import { PRICES_ROUTE_PATH, PRIVATE_ROUTE_PATH } from '@/lib/constants'
 import Link from 'next/link'
+import { SignOutApp } from './sign-out-app'
 
 type NavIcon = React.ForwardRefExoticComponent<
     Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
@@ -73,7 +74,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarContent>
                 <NavMain items={data.navMain} />
             </SidebarContent>
-            <SidebarFooter className="p-3">
+            <SidebarFooter className="p-3 flex flex-col gap-5">
                 <Image
                     src={`/assets/funny.webp?v=${buildId}`}
                     width={280}
@@ -82,6 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     alt="Vais ser pobre para sempre"
                     unoptimized
                 />
+                <SignOutApp />
             </SidebarFooter>
         </Sidebar>
     )

@@ -1,26 +1,14 @@
 'use client'
 
-import { useState } from 'react'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
+import { parseAsBoolean, useQueryState } from 'nuqs'
 
-const HIDE_PRICES_COOKIE_NAME = 'hide_prices'
-const HIDE_PRICES_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-
-type Props = {
-    defaultHide?: boolean
-}
-
-export function HidePrices({ defaultHide = false }: Props) {
-    const [hide, setHide] = useState(defaultHide)
-
-    const router = useRouter()
+export function HidePrices() {
+    const [hide, setHide] = useQueryState('hide_prices', parseAsBoolean)
 
     function onClick() {
         setHide(!hide)
-        document.cookie = `${HIDE_PRICES_COOKIE_NAME}=${!hide}; path=/; max-age=${HIDE_PRICES_COOKIE_MAX_AGE}`
-        router.refresh()
     }
 
     return (

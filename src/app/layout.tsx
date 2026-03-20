@@ -6,6 +6,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react'
 import { SpeedInsights as VercelSpeedInsights } from '@vercel/speed-insights/next'
 import { ServiceWorkerRegister } from '@/components/service-worker-register'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 
 const geistSans = Geist({
     variable: '--font-sans',
@@ -51,10 +52,12 @@ export default function RootLayout({ children }: Props) {
                 >
                     Skip to content
                 </a>
-                <TooltipProvider>
-                    <div className="flex-1">{children}</div>
-                </TooltipProvider>
-                <Toaster />
+                <NuqsAdapter defaultOptions={{ shallow: false }}>
+                    <TooltipProvider>
+                        <div className="flex-1">{children}</div>
+                    </TooltipProvider>
+                    <Toaster />
+                </NuqsAdapter>
                 <ServiceWorkerRegister />
             </body>
         </html>
