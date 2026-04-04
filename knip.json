@@ -1,0 +1,8 @@
+{
+    "$schema": "https://unpkg.com/knip@5/schema.json",
+    "tags": ["-lintignore"],
+    "entry": ["src/env/load-system-envs.ts"],
+    "ignoreBinaries": ["tsx"],
+    "ignoreDependencies": ["husky"],
+    "ignore": ["src/components/ui/**", "public/sw.js"]
+}
